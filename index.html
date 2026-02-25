@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Zweispieler-Würfelspiel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --p1-color: #d9534f;
+      --p2-color: #0275d8;
+      --bg: #111;
+      --panel-bg: #1c1c1c;
+      --accent: #f0ad4e;
+      --text: #f7f7f7;
+      --muted: #aaa;
+      --cell-border: #333;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #222, #050505);
+      color: var(--text);
+    }
+
+    #app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .player-zone {
+      display: flex;
+      align-items: stretch;
+      padding: 6px 8px;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.7);
+      border-top: 1px solid #222;
+      border-bottom: 1px solid #222;
+    }
+
+    .player-zone.top {
+      border-bottom: 1px solid #333;
+    }
+
+    .player-zone.bottom {
+      border-top: 1px solid #333;
+    }
+
+    .player-zone .label {
+      font-size: 0.8rem;
+      margin-bottom: 2px;
+      color: var(--muted);
+    }
+
+    .player-zone .block {
+      flex: 1;
+      background: var(--panel-bg);
+      border-radius: 6px;
+      padding: 4px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .player-zone .block.clickable {
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+
+    .player-zone .block.clickable.selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 6px rgba(240, 173, 78, 0.6);
+    }
+
+    .count-display {
+      font-size: 1.1rem;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .dice-icon-row {
+      display: flex;
+      justify-content: center;
+      gap: 2px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+      min-height: 16px;
+    }
+
+    .dice-mini {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      border: 1px solid #666;
+      background: #111;
+    }
+
+    .center-stats {
+      flex: 1.4;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      gap: 4px;
+    }
+
+    .counter-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .counter-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      width: 70px;
+      text-align: right;
+    }
+
+    .counter-value {
+      min-width: 20px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 4px;
+      padding: 4px 6px;
+      font-size: 0.8rem;
+      background: #333;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .btn.small {
+      width: 22px;
+      padding: 2px 0;
+    }
+
+    .btn.primary {
+      background: var(--accent);
+      color: #000;
+      font-weight: 600;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+      filter: brightness(0.9);
+    }
+
+    #middle {
+      flex: 1;
+      display: flex;
+      padding: 6px;
+      gap: 6px;
+      min-height: 0;
+    }
+
+    .side-panel {
+      width: 22%;
+      max-width: 110px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .side-card {
+      flex: 1;
+      background: var(--panel-bg);
+      border-radius: 6px;
+      padding: 4px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: stretch;
+      text-align: center;
+      font-size: 0.8rem;
+    }
+
+    .side-card h2 {
+      font-size: 0.8rem;
+      margin: 0 0 4px 0;
+      color: var(--muted);
+    }
+
+    .status-text {
+      font-size: 0.8rem;
+      line-height: 1.3;
+    }
+
+    #board-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 0;
+    }
+
+    #board {
+      width: 100%;
+      max-width: 420px;
+      aspect-ratio: 1 / 1;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-template-rows: repeat(7, 1fr);
+      gap: 2px;
+      background: #050505;
+      padding: 4px;
+      border-radius: 8px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.8);
+    }
+
+    .cell {
+      position: relative;
+      border-radius: 4px;
+      border: 1px solid var(--cell-border);
+      background: radial-gradient(circle at 30% 20%, #2b2b2b, #111);
+      overflow: hidden;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+    }
+
+    .cell.selected {
+      box-shadow: 0 0 6px rgba(240, 173, 78, 0.9);
+      border-color: var(--accent);
+    }
+
+    /* Feldtypen-Hintergründe */
+    .cell.type-neutral::before,
+    .cell.type-burg::before,
+    .cell.type-zelt::before,
+    .cell.type-portal-rot::before,
+    .cell.type-portal-blau::before,
+    .cell.type-daemon::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.16;
+      pointer-events: none;
+    }
+
+    .cell.type-neutral::before {
+      background: radial-gradient(circle, #777, #222);
+    }
+
+    .cell.type-burg::before {
+      background: linear-gradient(135deg, #666, #222);
+    }
+
+    .cell.type-zelt::before {
+      background: linear-gradient(135deg, #336633, #111);
+    }
+
+    .cell.type-portal-rot::before {
+      background: radial-gradient(circle, rgba(217, 83, 79, 0.7), #200);
+    }
+
+    .cell.type-portal-blau::before {
+      background: radial-gradient(circle, rgba(2, 117, 216, 0.7), #002);
+    }
+
+    .cell.type-daemon::before {
+      background: radial-gradient(circle, rgba(240, 173, 78, 0.7), #220);
+    }
+
+    .cell-label {
+      position: absolute;
+      bottom: 1px;
+      right: 2px;
+      font-size: 0.55rem;
+      color: rgba(255, 255, 255, 0.45);
+      text-shadow: 0 0 2px #000;
+      pointer-events: none;
+    }
+
+    .die {
+      position: relative;
+      z-index: 2;
+      width: 70%;
+      max-width: 38px;
+      aspect-ratio: 1 / 1;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #fff;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.9);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      font-size: 1rem;
+    }
+
+    .die.p1 {
+      background: radial-gradient(circle at 30% 20%, #ff877d, var(--p1-color));
+    }
+
+    .die.p2 {
+      background: radial-gradient(circle at 30% 20%, #79b5ff, var(--p2-color));
+    }
+
+    .current-die-view {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      gap: 4px;
+    }
+
+    .current-die-box {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      border: 2px dashed #555;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .current-die-box.empty {
+      font-size: 0.65rem;
+      color: var(--muted);
+    }
+
+    .legend {
+      font-size: 0.65rem;
+      margin-top: 4px;
+      color: var(--muted);
+      line-height: 1.3;
+    }
+
+    .legend span {
+      display: inline-block;
+      margin-right: 4px;
+      margin-bottom: 2px;
+      padding: 1px 3px;
+      border-radius: 3px;
+      background: #222;
+    }
+
+    #lobby-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      z-index: 999;
+      text-align: center;
+      padding: 20px;
+    }
+
+    #lobby-overlay h1 {
+      margin: 0 0 8px 0;
+      font-size: 1.3rem;
+    }
+
+    #lobby-overlay p {
+      margin: 0 0 12px 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    @media (min-width: 700px) {
+      #board {
+        max-width: 520px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- Lobby / Neustart -->
+    <div id="lobby-overlay">
+      <h1>2‑Spieler‑Würfelspiel</h1>
+      <p>Lokales Spiel auf einem Gerät. Berührt „Spiel starten“, um ein neues Match zu beginnen.</p>
+      <button class="btn primary" id="start-game-btn">Spiel starten</button>
+    </div>
+
+    <!-- Spielerzone 2 (oben) -->
+    <div class="player-zone top" data-player="2">
+      <div class="block clickable" id="p2-reserve">
+        <div class="label">Spieler 2 – Reserve</div>
+        <div class="count-display" id="p2-reserve-count">15</div>
+        <div class="dice-icon-row" id="p2-reserve-icons"></div>
+      </div>
+      <div class="center-stats">
+        <div class="counter-row">
+          <span class="counter-label">Triggerpunkte</span>
+          <button class="btn small" data-counter="p2-trigger" data-delta="-1">−</button>
+          <span class="counter-value" id="p2-trigger">0</span>
+          <button class="btn small" data-counter="p2-trigger" data-delta="1">+</button>
+        </div>
+        <div class="counter-row">
+          <span class="counter-label">Siegpunkte</span>
+          <button class="btn small" data-counter="p2-victory" data-delta="-1">−</button>
+          <span class="counter-value" id="p2-victory">0</span>
+          <button class="btn small" data-counter="p2-victory" data-delta="1">+</button>
+        </div>
+      </div>
+      <div class="block clickable" id="p2-exile">
+        <div class="label">Spieler 2 – Exil</div>
+        <div class="count-display" id="p2-exile-count">0</div>
+        <div class="dice-icon-row" id="p2-exile-icons"></div>
+      </div>
+    </div>
+
+    <!-- Mitte: Seitenleisten + Spielfeld -->
+    <div id="middle">
+      <!-- Linke Seite -->
+      <div class="side-panel">
+        <div class="side-card">
+          <h2>Lobby</h2>
+          <button class="btn" id="btn-lobby">Zur Lobby</button>
+        </div>
+        <div class="side-card">
+          <h2>Spielzustand</h2>
+          <div class="status-text" id="status-text">Spieler 1 ist am Zug.</div>
+        </div>
+        <div class="side-card">
+          <h2>Zug</h2>
+          <button class="btn primary" id="btn-end-turn">Zug beenden</button>
+        </div>
+      </div>
+
+      <!-- Spielfeld -->
+      <div id="board-container">
+        <div id="board"></div>
+      </div>
+
+      <!-- Rechte Seite: Würfel drehen -->
+      <div class="side-panel">
+        <div class="side-card">
+          <button class="btn primary" id="btn-die-plus">+ Seite</button>
+        </div>
+        <div class="side-card">
+          <h2>Gewählter Würfel</h2>
+          <div class="current-die-view">
+            <div class="current-die-box empty" id="current-die-box">
+              Kein<br />Würfel
+            </div>
+            <div id="current-die-info" style="font-size:0.7rem;color:var(--muted);text-align:center;">
+              Wähle einen Würfel auf dem Feld.
+            </div>
+          </div>
+        </div>
+        <div class="side-card">
+          <button class="btn primary" id="btn-die-minus">− Seite</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spielerzone 1 (unten) -->
+    <div class="player-zone bottom" data-player="1">
+      <div class="block clickable" id="p1-reserve">
+        <div class="label">Spieler 1 – Reserve</div>
+        <div class="count-display" id="p1-reserve-count">15</div>
+        <div class="dice-icon-row" id="p1-reserve-icons"></div>
+      </div>
+      <div class="center-stats">
+        <div class="counter-row">
+          <span class="counter-label">Triggerpunkte</span>
+          <button class="btn small" data-counter="p1-trigger" data-delta="-1">−</button>
+          <span class="counter-value" id="p1-trigger">0</span>
+          <button class="btn small" data-counter="p1-trigger" data-delta="1">+</button>
+        </div>
+        <div class="counter-row">
+          <span class="counter-label">Siegpunkte</span>
+          <button class="btn small" data-counter="p1-victory" data-delta="-1">−</button>
+          <span class="counter-value" id="p1-victory">0</span>
+          <button class="btn small" data-counter="p1-victory" data-delta="1">+</button>
+        </div>
+      </div>
+      <div class="block clickable" id="p1-exile">
+        <div class="label">Spieler 1 – Exil</div>
+        <div class="count-display" id="p1-exile-count">0</div>
+        <div class="dice-icon-row" id="p1-exile-icons"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Spielzustand ---
+    const SIZE = 7;
+    const FIELD_TYPES = [
+      "neutral",
+      "burg",
+      "zelt",
+      "portal-rot",
+      "portal-blau",
+      "daemon",
+    ];
+
+    const state = {
+      currentPlayer: 1,
+      gameOver: false,
+      board: [],
+      players: {
+        1: { reserve: 15, exile: 0, trigger: 0, victory: 0 },
+        2: { reserve: 15, exile: 0, trigger: 0, victory: 0 },
+      },
+      selected: null, // { type: "board", row, col } | { type:"reserve", player } | { type:"exile", player }
+    };
+
+    const boardEl = document.getElementById("board");
+    const statusTextEl = document.getElementById("status-text");
+
+    // Aktueller Würfel-View
+    const currentDieBox = document.getElementById("current-die-box");
+    const currentDieInfo = document.getElementById("current-die-info");
+
+    function initBoardState() {
+      state.board = [];
+      for (let r = 0; r < SIZE; r++) {
+        const row = [];
+        for (let c = 0; c < SIZE; c++) {
+          row.push({
+            owner: null, // 1 oder 2
+            value: null, // 1..6
+            type: "neutral",
+          });
+        }
+        state.board.push(row);
+      }
+    }
+
+    function buildBoardDOM() {
+      boardEl.innerHTML = "";
+      for (let r = 0; r < SIZE; r++) {
+        for (let c = 0; c < SIZE; c++) {
+          const cell = document.createElement("div");
+          cell.className = "cell type-neutral";
+          cell.dataset.row = r;
+          cell.dataset.col = c;
+
+          const label = document.createElement("div");
+          label.className = "cell-label";
+          label.textContent = ""; // optional: Typ-Kürzel
+          cell.appendChild(label);
+
+          cell.addEventListener("click", () => onCellClick(r, c));
+          boardEl.appendChild(cell);
+        }
+      }
+    }
+
+    function updateBoardDOM() {
+      for (let r = 0; r < SIZE; r++) {
+        for (let c = 0; c < SIZE; c++) {
+          const idx = r * SIZE + c;
+          const cellEl = boardEl.children[idx];
+          const data = state.board[r][c];
+
+          // CSS-Klassen für Feldtyp
+          cellEl.classList.remove(
+            "type-neutral",
+            "type-burg",
+            "type-zelt",
+            "type-portal-rot",
+            "type-portal-blau",
+            "type-daemon",
+            "selected"
+          );
+          cellEl.classList.add("type-" + data.type);
+
+          // Markierung, wenn aktuell gewählt
+          if (
+            state.selected &&
+            state.selected.type === "board" &&
+            state.selected.row === r &&
+            state.selected.col === c
+          ) {
+            cellEl.classList.add("selected");
+          }
+
+          // Feldtyp-Label
+          const labelEl = cellEl.querySelector(".cell-label");
+          labelEl.textContent = getFieldTypeShortLabel(data.type);
+
+          // Würfel darstellen
+          // Zuerst vorhandene Würfel entfernen
+          const oldDie = cellEl.querySelector(".die");
+          if (oldDie) oldDie.remove();
+
+          if (data.owner != null && data.value != null) {
+            const die = document.createElement("div");
+            die.className = "die " + (data.owner === 1 ? "p1" : "p2");
+            die.textContent = data.value;
+            cellEl.appendChild(die);
+          }
+        }
+      }
+    }
+
+    function getFieldTypeShortLabel(type) {
+      switch (type) {
+        case "neutral":
+          return "";
+        case "burg":
+          return "B";
+        case "zelt":
+          return "Z";
+        case "portal-rot":
+          return "PR";
+        case "portal-blau":
+          return "PB";
+        case "daemon":
+          return "D";
+        default:
+          return "";
+      }
+    }
+
+    function setStatus(text) {
+      statusTextEl.textContent = text;
+    }
+
+    function refreshPlayerPanels() {
+      [1, 2].forEach((p) => {
+        document.getElementById(`p${p}-reserve-count`).textContent =
+          state.players[p].reserve;
+        document.getElementById(`p${p}-exile-count`).textContent =
+          state.players[p].exile;
+        document.getElementById(`p${p}-trigger`).textContent =
+          state.players[p].trigger;
+        document.getElementById(`p${p}-victory`).textContent =
+          state.players[p].victory;
+
+        renderMiniDice(`p${p}-reserve-icons`, state.players[p].reserve);
+        renderMiniDice(`p${p}-exile-icons`, state.players[p].exile);
+      });
+
+      // Hervorhebung aktueller Spieler
+      document
+        .querySelectorAll(".player-zone")
+        .forEach((zone) => (zone.style.outline = "none"));
+      const currentZone = document.querySelector(
+        `.player-zone[data-player="${state.currentPlayer}"]`
+      );
+      if (currentZone) {
+        currentZone.style.outline = "2px solid var(--accent)";
+        currentZone.style.outlineOffset = "-2px";
+      }
+    }
+
+    function renderMiniDice(containerId, count) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      const maxIcons = Math.min(count, 10);
+      for (let i = 0; i < maxIcons; i++) {
+        const d = document.createElement("div");
+        d.className = "dice-mini";
+        container.appendChild(d);
+      }
+      if (count > maxIcons) {
+        const more = document.createElement("span");
+        more.style.fontSize = "0.65rem";
+        more.style.color = "var(--muted)";
+        more.textContent = `+${count - maxIcons}`;
+        container.appendChild(more);
+      }
+    }
+
+    function clearSelection() {
+      state.selected = null;
+      updateBoardDOM();
+      updateCurrentDieView();
+      document
+        .querySelectorAll(".player-zone .block.clickable")
+        .forEach((b) => b.classList.remove("selected"));
+    }
+
+    function onCellClick(r, c) {
+      if (state.gameOver) return;
+      const cell = state.board[r][c];
+      const hasDie = cell.owner !== null;
+
+      // Wenn hier ein Würfel liegt
+      if (hasDie) {
+        // Gleiches Feld erneut -> abwählen
+        if (
+          state.selected &&
+          state.selected.type === "board" &&
+          state.selected.row === r &&
+          state.selected.col === c
+        ) {
+          clearSelection();
+          return;
+        }
+        // Neuen Würfel wählen
+        state.selected = { type: "board", row: r, col: c };
+        updateBoardDOM();
+        updateCurrentDieView();
+        return;
+      }
+
+      // Leeres Feld
+      if (state.selected) {
+        // 1) Würfel von Brett bewegen
+        if (state.selected.type === "board") {
+          const from = state.board[state.selected.row][state.selected.col];
+          if (from && from.owner != null && from.value != null) {
+            // Ziehen auf freies Feld
+            cell.owner = from.owner;
+            cell.value = from.value;
+            // Feldtyp bleibt erhalten
+            from.owner = null;
+            from.value = null;
+            clearSelection();
+            updateBoardDOM();
+            return;
+          }
+        }
+
+        // 2) Würfel aus Reserve auf Feld setzen
+        if (
+          state.selected.type === "reserve" &&
+          state.selected.player === state.currentPlayer
+        ) {
+          const p = state.currentPlayer;
+          if (state.players[p].reserve > 0) {
+            state.players[p].reserve--;
+            cell.owner = p;
+            cell.value = 1; // Startwert
+            clearSelection();
+            refreshPlayerPanels();
+            updateBoardDOM();
+            return;
+          }
+        }
+      }
+
+      // Kein sinnvoller Move -> Feldtyp ändern (Zyklisch)
+      const index = FIELD_TYPES.indexOf(cell.type);
+      const nextIndex = (index + 1) % FIELD_TYPES.length;
+      cell.type = FIELD_TYPES[nextIndex];
+      updateBoardDOM();
+    }
+
+    // --- Reserve / Exil Klicks ---
+    function onReserveClick(player) {
+      if (state.gameOver) return;
+      const block = document.getElementById(`p${player}-reserve`);
+      const wasSelected =
+        state.selected &&
+        state.selected.type === "reserve" &&
+        state.selected.player === player;
+
+      clearSelection();
+
+      if (!wasSelected) {
+        if (state.players[player].reserve <= 0) return;
+        state.selected = { type: "reserve", player };
+        block.classList.add("selected");
+      }
+
+      updateCurrentDieView();
+    }
+
+    function onExileClick(player) {
+      if (state.gameOver) return;
+      const block = document.getElementById(`p${player}-exile`);
+      const wasSelected =
+        state.selected &&
+        state.selected.type === "exile" &&
+        state.selected.player === player;
+
+      clearSelection();
+
+      if (!wasSelected) {
+        if (state.players[player].exile <= 0) return;
+        state.selected = { type: "exile", player };
+        block.classList.add("selected");
+      }
+
+      updateCurrentDieView();
+    }
+
+    // Board-Würfel -> Reserve / Exil
+    function moveSelectedBoardDieToReserve(player) {
+      if (!state.selected || state.selected.type !== "board") return;
+      const { row, col } = state.selected;
+      const cell = state.board[row][col];
+      if (cell.owner !== player) return;
+
+      state.players[player].reserve++;
+      cell.owner = null;
+      cell.value = null;
+      clearSelection();
+      refreshPlayerPanels();
+      updateBoardDOM();
+    }
+
+    function moveSelectedBoardDieToExile(player) {
+      if (!state.selected || state.selected.type !== "board") return;
+      const { row, col } = state.selected;
+      const cell = state.board[row][col];
+      if (cell.owner !== player) return;
+
+      state.players[player].exile++;
+      cell.owner = null;
+      cell.value = null;
+      clearSelection();
+      refreshPlayerPanels();
+      updateBoardDOM();
+    }
+
+    // Reserve <-> Exil Bewegungen ohne Brett
+    function moveReserveToExile(player) {
+      if (state.players[player].reserve <= 0) return;
+      state.players[player].reserve--;
+      state.players[player].exile++;
+      clearSelection();
+      refreshPlayerPanels();
+    }
+
+    function moveExileToReserve(player) {
+      if (state.players[player].exile <= 0) return;
+      state.players[player].exile--;
+      state.players[player].reserve++;
+      clearSelection();
+      refreshPlayerPanels();
+    }
+
+    // --- Würfel drehen ---
+    function rotateSelectedDie(delta) {
+      if (state.gameOver) return;
+      if (!state.selected || state.selected.type !== "board") return;
+      const { row, col } = state.selected;
+      const cell = state.board[row][col];
+      if (cell.owner == null || cell.value == null) return;
+      let v = cell.value + delta;
+      if (v < 1) v = 6;
+      if (v > 6) v = 1;
+      cell.value = v;
+      updateBoardDOM();
+      updateCurrentDieView();
+    }
+
+    function updateCurrentDieView() {
+      if (!state.selected || state.selected.type !== "board") {
+        currentDieBox.classList.add("empty");
+        currentDieBox.textContent = "Kein\nWürfel";
+        currentDieBox.style.background = "transparent";
+        currentDieBox.style.borderStyle = "dashed";
+        currentDieInfo.textContent =
+          "Wähle einen Würfel auf dem Feld, um seine Seite zu drehen.";
+        return;
+      }
+      const { row, col } = state.selected;
+      const cell = state.board[row][col];
+      if (cell.owner == null || cell.value == null) {
+        currentDieBox.classList.add("empty");
+        currentDieBox.textContent = "Kein\nWürfel";
+        currentDieBox.style.background = "transparent";
+        currentDieBox.style.borderStyle = "dashed";
+        currentDieInfo.textContent =
+          "Wähle einen Würfel auf dem Feld, um seine Seite zu drehen.";
+        return;
+      }
+
+      currentDieBox.classList.remove("empty");
+      currentDieBox.textContent = cell.value;
+      currentDieBox.style.borderStyle = "solid";
+      currentDieBox.style.background =
+        cell.owner === 1
+          ? "radial-gradient(circle at 30% 20%, #ff877d, var(--p1-color))"
+          : "radial-gradient(circle at 30% 20%, #79b5ff, var(--p2-color))";
+      currentDieInfo.textContent =
+        "Spieler " + cell.owner + " – Wert " + cell.value;
+    }
+
+    // --- Counter (+/-) ---
+    function onCounterButtonClick(counterId, delta) {
+      if (state.gameOver && !counterId.endsWith("victory")) return;
+
+      let player = counterId.startsWith("p1") ? 1 : 2;
+      const field = counterId.endsWith("trigger") ? "trigger" : "victory";
+      let value = state.players[player][field] + delta;
+      if (value < 0) value = 0;
+      if (value > 10) value = 10;
+      state.players[player][field] = value;
+      document.getElementById(counterId).textContent = value;
+
+      // Siegprüfung
+      if (field === "victory" && value >= 10 && !state.gameOver) {
+        state.gameOver = true;
+        setStatus("Spieler " + player + " hat gewonnen!");
+      }
+    }
+
+    // --- Zug wechseln ---
+    function endTurn() {
+      if (state.gameOver) return;
+      state.currentPlayer = state.currentPlayer === 1 ? 2 : 1;
+      clearSelection();
+      setStatus("Spieler " + state.currentPlayer + " ist am Zug.");
+      refreshPlayerPanels();
+    }
+
+    // --- Lobby / Neustart ---
+    const lobbyOverlay = document.getElementById("lobby-overlay");
+    const startGameBtn = document.getElementById("start-game-btn");
+    startGameBtn.addEventListener("click", () => {
+      startNewGame();
+      lobbyOverlay.style.display = "none";
+    });
+
+    document.getElementById("btn-lobby").addEventListener("click", () => {
+      lobbyOverlay.style.display = "flex";
+    });
+
+    function startNewGame() {
+      state.currentPlayer = 1;
+      state.gameOver = false;
+      state.players[1] = { reserve: 15, exile: 0, trigger: 0, victory: 0 };
+      state.players[2] = { reserve: 15, exile: 0, trigger: 0, victory: 0 };
+      initBoardState();
+      buildBoardDOM();
+      updateBoardDOM();
+      refreshPlayerPanels();
+      clearSelection();
+      setStatus("Spieler 1 ist am Zug.");
+    }
+
+    function attachBoardListeners() {
+      // Reserve / Exil Klicks
+      document
+        .getElementById("p1-reserve")
+        .addEventListener("click", () => {
+          if (
+            state.selected &&
+            state.selected.type === "board" &&
+            state.board[state.selected.row][state.selected.col].owner === 1
+          ) {
+            // Brettwürfel -> Reserve
+            moveSelectedBoardDieToReserve(1);
+          } else if (
+            state.selected &&
+            state.selected.type === "exile" &&
+            state.selected.player === 1
+          ) {
+            // Exil -> Reserve
+            moveExileToReserve(1);
+          } else if (
+            state.selected &&
+            state.selected.type === "reserve" &&
+            state.selected.player === 1
+          ) {
+            // Reserve bereits gewählt -> abwählen
+            clearSelection();
+          } else {
+            onReserveClick(1);
+          }
+        });
+
+      document
+        .getElementById("p2-reserve")
+        .addEventListener("click", () => {
+          if (
+            state.selected &&
+            state.selected.type === "board" &&
+            state.board[state.selected.row][state.selected.col].owner === 2
+          ) {
+            moveSelectedBoardDieToReserve(2);
+          } else if (
+            state.selected &&
+            state.selected.type === "exile" &&
+            state.selected.player === 2
+          ) {
+            moveExileToReserve(2);
+          } else if (
+            state.selected &&
+            state.selected.type === "reserve" &&
+            state.selected.player === 2
+          ) {
+            clearSelection();
+          } else {
+            onReserveClick(2);
+          }
+        });
+
+      document.getElementById("p1-exile").addEventListener("click", () => {
+        if (
+          state.selected &&
+          state.selected.type === "board" &&
+          state.board[state.selected.row][state.selected.col].owner === 1
+        ) {
+          moveSelectedBoardDieToExile(1);
+        } else if (
+          state.selected &&
+          state.selected.type === "reserve" &&
+          state.selected.player === 1
+        ) {
+          moveReserveToExile(1);
+        } else if (
+          state.selected &&
+          state.selected.type === "exile" &&
+          state.selected.player === 1
+        ) {
+          clearSelection();
+        } else {
+          onExileClick(1);
+        }
+      });
+
+      document.getElementById("p2-exile").addEventListener("click", () => {
+        if (
+          state.selected &&
+          state.selected.type === "board" &&
+          state.board[state.selected.row][state.selected.col].owner === 2
+        ) {
+          moveSelectedBoardDieToExile(2);
+        } else if (
+          state.selected &&
+          state.selected.type === "reserve" &&
+          state.selected.player === 2
+        ) {
+          moveReserveToExile(2);
+        } else if (
+          state.selected &&
+          state.selected.type === "exile" &&
+          state.selected.player === 2
+        ) {
+          clearSelection();
+        } else {
+          onExileClick(2);
+        }
+      });
+
+      // Counter-Buttons
+      document.querySelectorAll("button[data-counter]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-counter");
+          const delta = parseInt(btn.getAttribute("data-delta"), 10);
+          onCounterButtonClick(id, delta);
+        });
+      });
+
+      // Zug beenden
+      document
+        .getElementById("btn-end-turn")
+        .addEventListener("click", endTurn);
+
+      // Würfel drehen
+      document
+        .getElementById("btn-die-plus")
+        .addEventListener("click", () => rotateSelectedDie(1));
+      document
+        .getElementById("btn-die-minus")
+        .addEventListener("click", () => rotateSelectedDie(-1));
+    }
+
+    // Erste Initialisierung (für Lobby-Hintergrund)
+    initBoardState();
+    buildBoardDOM();
+    updateBoardDOM();
+    refreshPlayerPanels();
+    attachBoardListeners();
+
+    // Kleine Legende einfügen
+    const legend = document.createElement("div");
+    legend.className = "legend";
+    legend.innerHTML =
+      "<span>B: Burg</span><span>Z: Zelt</span><span>PR: rotes Portal</span><span>PB: blaues Portal</span><span>D: Dämon</span>";
+    document.querySelector("#board-container").appendChild(legend);
+  </script>
+</body>
+</html>
