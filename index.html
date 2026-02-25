@@ -199,6 +199,7 @@
     #board-container {
       flex: 1;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       min-width: 0;
@@ -341,6 +342,7 @@
       margin-top: 4px;
       color: var(--muted);
       line-height: 1.3;
+      text-align: center;
     }
 
     .legend span {
@@ -380,6 +382,23 @@
     @media (min-width: 700px) {
       #board {
         max-width: 520px;
+      }
+    }
+
+    /* Responsive Layout für schmale Displays */
+    @media (max-width: 700px) {
+      #middle {
+        flex-direction: column;
+      }
+
+      .side-panel {
+        width: 100%;
+        max-width: none;
+        flex-direction: row;
+      }
+
+      .side-card {
+        flex: 1;
       }
     }
   </style>
@@ -423,7 +442,7 @@
 
     <!-- Mitte: Seitenleisten + Spielfeld -->
     <div id="middle">
-      <!-- Linke Seite -->
+      <!-- Obere Side-Panel (wird auf schmalen Screens zur oberen Dreier-Reihe) -->
       <div class="side-panel">
         <div class="side-card">
           <h2>Lobby</h2>
@@ -442,12 +461,20 @@
       <!-- Spielfeld -->
       <div id="board-container">
         <div id="board"></div>
+        <!-- Legende dauerhaft unter dem Spielfeld -->
+        <div class="legend">
+          <span>B: Burg</span>
+          <span>Z: Zelt</span>
+          <span>PR: rotes Portal</span>
+          <span>PB: blaues Portal</span>
+          <span>D: Dämon</span>
+        </div>
       </div>
 
-      <!-- Rechte Seite: Würfel drehen -->
+      <!-- Untere Side-Panel (wird auf schmalen Screens zur unteren Dreier-Reihe) -->
       <div class="side-panel">
         <div class="side-card">
-          <button class="btn primary" id="btn-die-plus">+ Seite</button>
+          <button class="btn primary" id="btn-die-minus">Abwerten (-)</button>
         </div>
         <div class="side-card">
           <h2>Gewählter Würfel</h2>
@@ -461,7 +488,7 @@
           </div>
         </div>
         <div class="side-card">
-          <button class="btn primary" id="btn-die-minus">− Seite</button>
+          <button class="btn primary" id="btn-die-plus">Aufwerten (+)</button>
         </div>
       </div>
     </div>
@@ -594,7 +621,6 @@
           labelEl.textContent = getFieldTypeShortLabel(data.type);
 
           // Würfel darstellen
-          // Zuerst vorhandene Würfel entfernen
           const oldDie = cellEl.querySelector(".die");
           if (oldDie) oldDie.remove();
 
@@ -1073,13 +1099,6 @@
     updateBoardDOM();
     refreshPlayerPanels();
     attachBoardListeners();
-
-    // Kleine Legende einfügen
-    const legend = document.createElement("div");
-    legend.className = "legend";
-    legend.innerHTML =
-      "<span>B: Burg</span><span>Z: Zelt</span><span>PR: rotes Portal</span><span>PB: blaues Portal</span><span>D: Dämon</span>";
-    document.querySelector("#board-container").appendChild(legend);
   </script>
 </body>
 </html>

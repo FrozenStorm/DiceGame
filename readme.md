@@ -50,3 +50,10 @@ Das Spiel hat gewonnen wer zuerst 10 Siegespunkte hat.
 
 # Korrekturen
 die punkte zählen doppelt wenn man auf + und - drückt und bereits 3 fach sobald man ein zweites mal in die lobby zurück und ein neues spiel startet
+
+# Verbesserung in neuem Dialog mit aktuellem Code
+<!DOCTYPE html>
+...
+</html>
+
+passe diesen code so an, dass die side panel bei schmalen displays über und unter das spielfeld rutschen, wobei oben links der button zur lobby ist in der mitte der spielzustand und rechts zug beenden und unterhalb vom spielfeld links - Seite in der mitte der gewählte würfel und rechts + Seite. Verschiebe zuätzlich die legende der Felder permanent unter das Spielfeld
