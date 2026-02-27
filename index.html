@@ -203,14 +203,16 @@
       justify-content: center;
       align-items: center;
       min-width: 0;
+      position: relative;
     }
 
+    /* Board: 7x7 Zellen, plus je 1 Spalte links/rechts für Bonus-Labels */
     #board {
       width: 100%;
       max-width: 420px;
       aspect-ratio: 1 / 1;
       display: grid;
-      grid-template-columns: repeat(7, 1fr);
+      grid-template-columns: auto repeat(7, 1fr) auto;
       grid-template-rows: repeat(7, 1fr);
       gap: 2px;
       background: #050505;
@@ -223,7 +225,7 @@
       position: relative;
       border-radius: 4px;
       border: 1px solid var(--cell-border);
-      background: radial-gradient(circle at 30% 20%, #2b2b2b, #111);
+      background: #111;
       overflow: hidden;
       cursor: pointer;
       display: flex;
@@ -237,42 +239,45 @@
       border-color: var(--accent);
     }
 
-    /* Feldtypen-Hintergründe */
-    .cell.type-neutral::before,
-    .cell.type-burg::before,
-    .cell.type-zelt::before,
-    .cell.type-portal-rot::before,
-    .cell.type-portal-blau::before,
-    .cell.type-daemon::before {
+    /* Feldtypen-Grafiken über ::before */
+    .cell::before {
       content: "";
       position: absolute;
       inset: 0;
-      opacity: 0.16;
+      opacity: 0.9;
       pointer-events: none;
+      background-size: contain; /* Bild vollständig anzeigen */
+      background-position: center;
+      background-repeat: no-repeat;
     }
 
     .cell.type-neutral::before {
+      opacity: 0.2;
       background: radial-gradient(circle, #777, #222);
     }
 
-    .cell.type-burg::before {
-      background: linear-gradient(135deg, #666, #222);
+    .cell.type-Set1::before {
+      background-image: url("img/Set1/marker.png");
     }
 
-    .cell.type-zelt::before {
-      background: linear-gradient(135deg, #336633, #111);
+    .cell.type-Set2::before {
+      background-image: url("img/Set2/marker.png");
     }
 
-    .cell.type-portal-rot::before {
-      background: radial-gradient(circle, rgba(217, 83, 79, 0.7), #200);
+    .cell.type-Set3::before {
+      background-image: url("img/Set3/marker.png");
     }
 
-    .cell.type-portal-blau::before {
-      background: radial-gradient(circle, rgba(2, 117, 216, 0.7), #002);
+    .cell.type-Set4::before {
+      background-image: url("img/Set4/marker.png");
     }
 
-    .cell.type-daemon::before {
-      background: radial-gradient(circle, rgba(240, 173, 78, 0.7), #220);
+    .cell.type-Set5::before {
+      background-image: url("img/Set5/marker.png");
+    }
+	
+	.cell.type-Set6::before {
+      background-image: url("img/Set6/marker.png");
     }
 
     .cell-label {
@@ -280,7 +285,7 @@
       bottom: 1px;
       right: 2px;
       font-size: 0.55rem;
-      color: rgba(255, 255, 255, 0.45);
+      color: rgba(255, 255, 255, 0.7);
       text-shadow: 0 0 2px #000;
       pointer-events: none;
     }
@@ -288,8 +293,8 @@
     .die {
       position: relative;
       z-index: 2;
-      width: 70%;
-      max-width: 38px;
+      width: 80%;
+      /* max-width: 38px; */
       aspect-ratio: 1 / 1;
       border-radius: 8px;
       display: flex;
@@ -300,6 +305,10 @@
       box-shadow: 0 0 6px rgba(0, 0, 0, 0.9);
       border: 2px solid rgba(255, 255, 255, 0.2);
       font-size: 1rem;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-clip: border-box;
     }
 
     .die.p1 {
@@ -320,8 +329,8 @@
     }
 
     .current-die-box {
-      width: 50px;
-      height: 50px;
+      width: 70px;
+      height: 70px;
       border-radius: 8px;
       border: 2px dashed #555;
       display: flex;
@@ -330,6 +339,10 @@
       font-size: 1.3rem;
       font-weight: 700;
       color: #fff;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-clip: border-box;
     }
 
     .current-die-box.empty {
@@ -337,22 +350,28 @@
       color: var(--muted);
     }
 
-    .legend {
-      font-size: 0.65rem;
-      margin-top: 4px;
-      color: var(--muted);
-      line-height: 1.3;
-      text-align: center;
+    /* Bonus-Zeilenlegenden als Grid-Items, die mit den Zeilen mitrutschen */
+    .bonus-label {
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-shadow: 0 0 3px #000;
+      pointer-events: none;
+      padding: 1px 4px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.7);
     }
 
-    .legend span {
-      display: inline-block;
-      margin-right: 4px;
-      margin-bottom: 2px;
-      padding: 1px 3px;
-      border-radius: 3px;
-      background: #222;
+    .bonus-label-top {
+      justify-self: flex-end;
+      align-self: center;
     }
+
+    .bonus-label-bottom {
+      justify-self: flex-start;
+      align-self: center;
+    }
+
+    /* Lobby / Neustart */
 
     #lobby-overlay {
       position: fixed;
@@ -374,9 +393,36 @@
     }
 
     #lobby-overlay p {
-      margin: 0 0 12px 0;
+      margin: 0 0 8px 0;
       font-size: 0.9rem;
       color: var(--muted);
+    }
+
+    #lobby-config {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 8px;
+      width: 100%;
+      max-width: 260px;
+    }
+
+    .lobby-player-config label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: stretch;
+    }
+
+    #lobby-config select {
+      border-radius: 4px;
+      border: 1px solid #333;
+      background: #000;
+      color: var(--text);
+      padding: 4px 6px;
+      font-size: 0.85rem;
     }
 
     @media (min-width: 700px) {
@@ -384,6 +430,8 @@
         max-width: 520px;
       }
     }
+
+
 
     /* Responsive Layout für schmale Displays */
     @media (max-width: 700px) {
@@ -400,15 +448,36 @@
       .side-card {
         flex: 1;
       }
+
+      /* when panel is horizontal put Aufwerten button on the right */
+      .btn-up-card { order: 3; }
+      .current-die-card { order: 2; }
+      .btn-down-card { order: 1; }
     }
   </style>
 </head>
 <body>
   <div id="app">
-    <!-- Lobby / Neustart -->
+    <!-- Lobby / Neustart mit Würfel-Set-Auswahl -->
     <div id="lobby-overlay">
       <h1>2‑Spieler‑Würfelspiel</h1>
-      <p>Lokales Spiel auf einem Gerät. Berührt „Spiel starten“, um ein neues Match zu beginnen.</p>
+      <p>Lokales Spiel auf einem Gerät. Wähle pro Spieler ein Würfel‑Set und starte das Match.</p>
+
+      <div id="lobby-config">
+        <div class="lobby-player-config">
+          <label>
+            Spieler 1 – Würfel‑Set
+            <select id="p1-dice-set"></select>
+          </label>
+        </div>
+        <div class="lobby-player-config">
+          <label>
+            Spieler 2 – Würfel‑Set
+            <select id="p2-dice-set"></select>
+          </label>
+        </div>
+      </div>
+
       <button class="btn primary" id="start-game-btn">Spiel starten</button>
     </div>
 
@@ -442,10 +511,10 @@
 
     <!-- Mitte: Seitenleisten + Spielfeld -->
     <div id="middle">
-      <!-- Obere Side-Panel (wird auf schmalen Screens zur oberen Dreier-Reihe) -->
+      <!-- Obere Side-Panel -->
       <div class="side-panel">
         <div class="side-card">
-          <h2>Lobby</h2>
+          <!-- <h2>Lobby</h2> -->
           <button class="btn" id="btn-lobby">Zur Lobby</button>
         </div>
         <div class="side-card">
@@ -453,7 +522,7 @@
           <div class="status-text" id="status-text">Spieler 1 ist am Zug.</div>
         </div>
         <div class="side-card">
-          <h2>Zug</h2>
+          <!-- <h2>Zug</h2> -->
           <button class="btn primary" id="btn-end-turn">Zug beenden</button>
         </div>
       </div>
@@ -461,23 +530,15 @@
       <!-- Spielfeld -->
       <div id="board-container">
         <div id="board"></div>
-        <!-- Legende dauerhaft unter dem Spielfeld -->
-        <div class="legend">
-          <span>B: Burg</span>
-          <span>Z: Zelt</span>
-          <span>PR: rotes Portal</span>
-          <span>PB: blaues Portal</span>
-          <span>D: Dämon</span>
-        </div>
       </div>
 
-      <!-- Untere Side-Panel (wird auf schmalen Screens zur unteren Dreier-Reihe) -->
+      <!-- Untere Side-Panel -->
       <div class="side-panel">
-        <div class="side-card">
-          <button class="btn primary" id="btn-die-minus">Abwerten (-)</button>
+        <div class="side-card btn-up-card">
+            <button class="btn primary" id="btn-die-plus">+</button>
         </div>
-        <div class="side-card">
-          <h2>Gewählter Würfel</h2>
+        <div class="side-card current-die-card">
+          <!-- <h2>Gewählter Würfel</h2> -->
           <div class="current-die-view">
             <div class="current-die-box empty" id="current-die-box">
               Kein<br />Würfel
@@ -487,8 +548,8 @@
             </div>
           </div>
         </div>
-        <div class="side-card">
-          <button class="btn primary" id="btn-die-plus">Aufwerten (+)</button>
+        <div class="side-card btn-down-card">
+          <button class="btn primary" id="btn-die-minus">-</button>
         </div>
       </div>
     </div>
@@ -523,15 +584,27 @@
   </div>
 
   <script>
+    // --- Würfel-Sets: manuell zu deinen /img/<SetName>/ Ordnern passend halten ---
+    const DICE_SETS = [
+      { id: "numbers", label: "Standard (Zahlen)" },
+      { id: "Set1", label: "Set 1" },
+      { id: "Set2", label: "Set 2" },
+      { id: "Set3", label: "Set 3" },
+      { id: "Set4", label: "Set 4" },
+      { id: "Set5", label: "Set 5" },
+      { id: "Set6", label: "Set 6" }
+    ];
+
     // --- Spielzustand ---
     const SIZE = 7;
     const FIELD_TYPES = [
       "neutral",
-      "burg",
-      "zelt",
-      "portal-rot",
-      "portal-blau",
-      "daemon",
+      "Set1",
+      "Set2",
+      "Set3",
+      "Set4",
+      "Set5",
+	  "Set6",
     ];
 
     const state = {
@@ -539,18 +612,19 @@
       gameOver: false,
       board: [],
       players: {
-        1: { reserve: 15, exile: 0, trigger: 0, victory: 0 },
-        2: { reserve: 15, exile: 0, trigger: 0, victory: 0 },
+        1: { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: "numbers" },
+        2: { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: "numbers" },
       },
-      selected: null, // { type: "board", row, col } | { type:"reserve", player } | { type:"exile", player }
+      selected: null,
     };
 
     const boardEl = document.getElementById("board");
     const statusTextEl = document.getElementById("status-text");
 
-    // Aktueller Würfel-View
     const currentDieBox = document.getElementById("current-die-box");
     const currentDieInfo = document.getElementById("current-die-info");
+
+    // --- Board & Feldtypen ---
 
     function initBoardState() {
       state.board = [];
@@ -558,8 +632,8 @@
         const row = [];
         for (let c = 0; c < SIZE; c++) {
           row.push({
-            owner: null, // 1 oder 2
-            value: null, // 1..6
+            owner: null,
+            value: null,
             type: "neutral",
           });
         }
@@ -569,6 +643,7 @@
 
     function buildBoardDOM() {
       boardEl.innerHTML = "";
+      // Spielfeld-Zellen: Grid‑Position explizit setzen (Spalten 2–8 sind das eigentliche Feld)
       for (let r = 0; r < SIZE; r++) {
         for (let c = 0; c < SIZE; c++) {
           const cell = document.createElement("div");
@@ -576,14 +651,46 @@
           cell.dataset.row = r;
           cell.dataset.col = c;
 
+          // Grid-Position: Zeilen 1–7, Spalten 2–8 (1 & 9 sind für Bonus-Labels)
+          cell.style.gridRow = String(r + 1);
+          cell.style.gridColumn = String(c + 2);
+
           const label = document.createElement("div");
           label.className = "cell-label";
-          label.textContent = ""; // optional: Typ-Kürzel
+          label.textContent = "";
           cell.appendChild(label);
 
           cell.addEventListener("click", () => onCellClick(r, c));
           boardEl.appendChild(cell);
         }
+      }
+
+      // Bonus-Zeilenlegenden als Grid-Items hinzufügen
+      createRowBonusLabels();
+    }
+
+    function createRowBonusLabels() {
+      // Oben rechts: +3 (oberste Zeile), +2, +1
+      const topTexts = ["+3", "+2", "+1"];
+      for (let i = 0; i < 3; i++) {
+        const label = document.createElement("div");
+        label.className = "bonus-label bonus-label-top";
+        label.textContent = topTexts[i];
+        label.style.gridRow = String(i + 1); // Zeilen 1,2,3
+        label.style.gridColumn = "9";        // rechte Label-Spalte
+        boardEl.appendChild(label);
+      }
+
+      // Links unten: unterste +3, zweitunterste +2, drittunterste +1
+      // Anzeige von oben nach unten: +1, +2, +3 bei Grid-Zeilen 5,6,7
+      const bottomTexts = ["+1", "+2", "+3"];
+      for (let i = 0; i < 3; i++) {
+        const label = document.createElement("div");
+        label.className = "bonus-label bonus-label-bottom";
+        label.textContent = bottomTexts[i];
+        label.style.gridRow = String(5 + i); // 5,6,7
+        label.style.gridColumn = "1";        // linke Label-Spalte
+        boardEl.appendChild(label);
       }
     }
 
@@ -594,19 +701,18 @@
           const cellEl = boardEl.children[idx];
           const data = state.board[r][c];
 
-          // CSS-Klassen für Feldtyp
           cellEl.classList.remove(
             "type-neutral",
-            "type-burg",
-            "type-zelt",
-            "type-portal-rot",
-            "type-portal-blau",
-            "type-daemon",
+            "type-Set1",
+            "type-Set2",
+            "type-Set3",
+            "type-Set4",
+            "type-Set5",
+			"type-Set6",
             "selected"
           );
           cellEl.classList.add("type-" + data.type);
 
-          // Markierung, wenn aktuell gewählt
           if (
             state.selected &&
             state.selected.type === "board" &&
@@ -616,18 +722,47 @@
             cellEl.classList.add("selected");
           }
 
-          // Feldtyp-Label
           const labelEl = cellEl.querySelector(".cell-label");
           labelEl.textContent = getFieldTypeShortLabel(data.type);
 
-          // Würfel darstellen
           const oldDie = cellEl.querySelector(".die");
           if (oldDie) oldDie.remove();
 
           if (data.owner != null && data.value != null) {
+            const owner = data.owner;
+            const player = state.players[owner];
+            const diceSet = player && player.diceSet ? player.diceSet : "numbers";
+
             const die = document.createElement("div");
-            die.className = "die " + (data.owner === 1 ? "p1" : "p2");
-            die.textContent = data.value;
+            die.className = "die " + (owner === 1 ? "p1" : "p2");
+
+            if (diceSet === "numbers") {
+              // Zahlenwürfel mit Spieler-spezifischen Farben wie im updateCurrentDieView
+              die.textContent = data.value;
+              die.style.backgroundImage = "none";
+              die.style.background =
+                owner === 1
+                  ? "radial-gradient(circle at 30% 20%, #ff877d, var(--p1-color))"
+                  : "radial-gradient(circle at 30% 20%, #79b5ff, var(--p2-color))";
+              die.style.color = "#fff";
+            } else {
+              // Bildwürfel
+die.textContent = "";
+const imgPath = `img/${diceSet}/${data.value}.png`;
+const img = document.createElement("img");
+img.src = imgPath;
+img.style.width = "100%";
+img.style.height = "100%";
+img.style.objectFit = "contain";
+img.style.borderRadius = "6px";
+img.alt = `Würfel ${data.value}`;
+if (owner === 2) {
+  // Spieler 2 sieht Würfel umgedreht
+  img.style.transform = "rotate(180deg)";
+}
+die.appendChild(img);
+            }
+
             cellEl.appendChild(die);
           }
         }
@@ -638,16 +773,18 @@
       switch (type) {
         case "neutral":
           return "";
-        case "burg":
-          return "B";
-        case "zelt":
-          return "Z";
-        case "portal-rot":
-          return "PR";
-        case "portal-blau":
-          return "PB";
-        case "daemon":
-          return "D";
+        case "Set1":
+          return "";
+        case "Set2":
+          return "S2";
+        case "Set3":
+          return "S3";
+        case "Set4":
+          return "S4";
+        case "Set5":
+          return "S5";
+		case "Set6":
+          return "S6";
         default:
           return "";
       }
@@ -672,7 +809,6 @@
         renderMiniDice(`p${p}-exile-icons`, state.players[p].exile);
       });
 
-      // Hervorhebung aktueller Spieler
       document
         .querySelectorAll(".player-zone")
         .forEach((zone) => (zone.style.outline = "none"));
@@ -688,7 +824,7 @@
     function renderMiniDice(containerId, count) {
       const container = document.getElementById(containerId);
       container.innerHTML = "";
-      const maxIcons = Math.min(count, 10);
+      const maxIcons = Math.min(count, 5);
       for (let i = 0; i < maxIcons; i++) {
         const d = document.createElement("div");
         d.className = "dice-mini";
@@ -717,9 +853,7 @@
       const cell = state.board[r][c];
       const hasDie = cell.owner !== null;
 
-      // Wenn hier ein Würfel liegt
       if (hasDie) {
-        // Gleiches Feld erneut -> abwählen
         if (
           state.selected &&
           state.selected.type === "board" &&
@@ -729,23 +863,18 @@
           clearSelection();
           return;
         }
-        // Neuen Würfel wählen
         state.selected = { type: "board", row: r, col: c };
         updateBoardDOM();
         updateCurrentDieView();
         return;
       }
 
-      // Leeres Feld
       if (state.selected) {
-        // 1) Würfel von Brett bewegen
         if (state.selected.type === "board") {
           const from = state.board[state.selected.row][state.selected.col];
           if (from && from.owner != null && from.value != null) {
-            // Ziehen auf freies Feld
             cell.owner = from.owner;
             cell.value = from.value;
-            // Feldtyp bleibt erhalten
             from.owner = null;
             from.value = null;
             clearSelection();
@@ -754,16 +883,24 @@
           }
         }
 
-        // 2) Würfel aus Reserve auf Feld setzen
-        if (
-          state.selected.type === "reserve" &&
-          state.selected.player === state.currentPlayer
-        ) {
-          const p = state.currentPlayer;
+        if (state.selected.type === "reserve") {
+          const p = state.selected.player;
           if (state.players[p].reserve > 0) {
             state.players[p].reserve--;
             cell.owner = p;
-            cell.value = 1; // Startwert
+            cell.value = 1;
+            clearSelection();
+            refreshPlayerPanels();
+            updateBoardDOM();
+            return;
+          }
+        }
+        if (state.selected.type === "exile") {
+          const p = state.selected.player;
+          if (state.players[p].exile > 0) {
+            state.players[p].exile--;
+            cell.owner = p;
+            cell.value = 1;
             clearSelection();
             refreshPlayerPanels();
             updateBoardDOM();
@@ -772,14 +909,12 @@
         }
       }
 
-      // Kein sinnvoller Move -> Feldtyp ändern (Zyklisch)
       const index = FIELD_TYPES.indexOf(cell.type);
       const nextIndex = (index + 1) % FIELD_TYPES.length;
       cell.type = FIELD_TYPES[nextIndex];
       updateBoardDOM();
     }
 
-    // --- Reserve / Exil Klicks ---
     function onReserveClick(player) {
       if (state.gameOver) return;
       const block = document.getElementById(`p${player}-reserve`);
@@ -818,7 +953,6 @@
       updateCurrentDieView();
     }
 
-    // Board-Würfel -> Reserve / Exil
     function moveSelectedBoardDieToReserve(player) {
       if (!state.selected || state.selected.type !== "board") return;
       const { row, col } = state.selected;
@@ -847,7 +981,6 @@
       updateBoardDOM();
     }
 
-    // Reserve <-> Exil Bewegungen ohne Brett
     function moveReserveToExile(player) {
       if (state.players[player].reserve <= 0) return;
       state.players[player].reserve--;
@@ -864,7 +997,6 @@
       refreshPlayerPanels();
     }
 
-    // --- Würfel drehen ---
     function rotateSelectedDie(delta) {
       if (state.gameOver) return;
       if (!state.selected || state.selected.type !== "board") return;
@@ -882,7 +1014,8 @@
     function updateCurrentDieView() {
       if (!state.selected || state.selected.type !== "board") {
         currentDieBox.classList.add("empty");
-        currentDieBox.textContent = "Kein\nWürfel";
+        currentDieBox.innerHTML = "Kein<br />Würfel";
+        currentDieBox.style.backgroundImage = "none";
         currentDieBox.style.background = "transparent";
         currentDieBox.style.borderStyle = "dashed";
         currentDieInfo.textContent =
@@ -893,7 +1026,8 @@
       const cell = state.board[row][col];
       if (cell.owner == null || cell.value == null) {
         currentDieBox.classList.add("empty");
-        currentDieBox.textContent = "Kein\nWürfel";
+        currentDieBox.innerHTML = "Kein<br />Würfel";
+        currentDieBox.style.backgroundImage = "none";
         currentDieBox.style.background = "transparent";
         currentDieBox.style.borderStyle = "dashed";
         currentDieInfo.textContent =
@@ -901,18 +1035,41 @@
         return;
       }
 
+      const player = state.players[cell.owner];
+      const diceSet = player && player.diceSet ? player.diceSet : "numbers";
+
       currentDieBox.classList.remove("empty");
-      currentDieBox.textContent = cell.value;
       currentDieBox.style.borderStyle = "solid";
-      currentDieBox.style.background =
-        cell.owner === 1
-          ? "radial-gradient(circle at 30% 20%, #ff877d, var(--p1-color))"
-          : "radial-gradient(circle at 30% 20%, #79b5ff, var(--p2-color))";
+
+      if (diceSet === "numbers") {
+        currentDieBox.innerHTML = String(cell.value);
+        currentDieBox.style.backgroundImage = "none";
+        currentDieBox.style.background =
+          cell.owner === 1
+            ? "radial-gradient(circle at 30% 20%, #ff877d, var(--p1-color))"
+            : "radial-gradient(circle at 30% 20%, #79b5ff, var(--p2-color))";
+        currentDieBox.style.color = "#fff";
+      } else {
+currentDieBox.innerHTML = "";
+const imgPath = `img/${diceSet}/${cell.value}.png`;
+const img = document.createElement("img");
+img.src = imgPath;
+img.style.width = "100%";
+img.style.height = "100%";
+img.style.objectFit = "contain";
+img.style.borderRadius = "6px";
+img.alt = `Würfel ${cell.value}`;
+if (cell.owner === 2) {
+  img.style.transform = "rotate(180deg)";
+}
+currentDieBox.appendChild(img);
+        currentDieBox.style.color = "transparent";
+      }
+
       currentDieInfo.textContent =
         "Spieler " + cell.owner + " – Wert " + cell.value;
     }
 
-    // --- Counter (+/-) ---
     function onCounterButtonClick(counterId, delta) {
       if (state.gameOver && !counterId.endsWith("victory")) return;
 
@@ -924,14 +1081,12 @@
       state.players[player][field] = value;
       document.getElementById(counterId).textContent = value;
 
-      // Siegprüfung
       if (field === "victory" && value >= 10 && !state.gameOver) {
         state.gameOver = true;
         setStatus("Spieler " + player + " hat gewonnen!");
       }
     }
 
-    // --- Zug wechseln ---
     function endTurn() {
       if (state.gameOver) return;
       state.currentPlayer = state.currentPlayer === 1 ? 2 : 1;
@@ -940,7 +1095,25 @@
       refreshPlayerPanels();
     }
 
-    // --- Lobby / Neustart ---
+    // --- Lobby / Würfel-Set-Auswahl ---
+
+    function initLobbyDiceSets() {
+      const p1Select = document.getElementById("p1-dice-set");
+      const p2Select = document.getElementById("p2-dice-set");
+
+      [p1Select, p2Select].forEach((select) => {
+        if (!select) return;
+        select.innerHTML = "";
+        DICE_SETS.forEach((set) => {
+          const opt = document.createElement("option");
+          opt.value = set.id;
+          opt.textContent = set.label;
+          select.appendChild(opt);
+        });
+        select.value = "numbers";
+      });
+    }
+
     const lobbyOverlay = document.getElementById("lobby-overlay");
     const startGameBtn = document.getElementById("start-game-btn");
     startGameBtn.addEventListener("click", () => {
@@ -953,10 +1126,16 @@
     });
 
     function startNewGame() {
+      const p1Select = document.getElementById("p1-dice-set");
+      const p2Select = document.getElementById("p2-dice-set");
+      const p1Set = p1Select ? p1Select.value : "numbers";
+      const p2Set = p2Select ? p2Select.value : "numbers";
+
       state.currentPlayer = 1;
       state.gameOver = false;
-      state.players[1] = { reserve: 15, exile: 0, trigger: 0, victory: 0 };
-      state.players[2] = { reserve: 15, exile: 0, trigger: 0, victory: 0 };
+      state.players[1] = { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: p1Set };
+      state.players[2] = { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: p2Set };
+
       initBoardState();
       buildBoardDOM();
       updateBoardDOM();
@@ -965,8 +1144,9 @@
       setStatus("Spieler 1 ist am Zug.");
     }
 
+    // --- Event-Handler für Reserve/Exil etc. ---
+
     function attachBoardListeners() {
-      // Reserve / Exil Klicks
       document
         .getElementById("p1-reserve")
         .addEventListener("click", () => {
@@ -975,21 +1155,18 @@
             state.selected.type === "board" &&
             state.board[state.selected.row][state.selected.col].owner === 1
           ) {
-            // Brettwürfel -> Reserve
             moveSelectedBoardDieToReserve(1);
           } else if (
             state.selected &&
             state.selected.type === "exile" &&
             state.selected.player === 1
           ) {
-            // Exil -> Reserve
             moveExileToReserve(1);
           } else if (
             state.selected &&
             state.selected.type === "reserve" &&
             state.selected.player === 1
           ) {
-            // Reserve bereits gewählt -> abwählen
             clearSelection();
           } else {
             onReserveClick(1);
@@ -1070,7 +1247,6 @@
         }
       });
 
-      // Counter-Buttons
       document.querySelectorAll("button[data-counter]").forEach((btn) => {
         btn.addEventListener("click", () => {
           const id = btn.getAttribute("data-counter");
@@ -1079,12 +1255,10 @@
         });
       });
 
-      // Zug beenden
       document
         .getElementById("btn-end-turn")
         .addEventListener("click", endTurn);
 
-      // Würfel drehen
       document
         .getElementById("btn-die-plus")
         .addEventListener("click", () => rotateSelectedDie(1));
@@ -1093,12 +1267,14 @@
         .addEventListener("click", () => rotateSelectedDie(-1));
     }
 
-    // Erste Initialisierung (für Lobby-Hintergrund)
+    // --- Init ---
+
     initBoardState();
     buildBoardDOM();
     updateBoardDOM();
     refreshPlayerPanels();
     attachBoardListeners();
+    initLobbyDiceSets();
   </script>
 </body>
 </html>
