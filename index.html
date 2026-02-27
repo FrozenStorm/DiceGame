@@ -767,32 +767,34 @@
             const die = document.createElement("div");
             die.className = "die " + (owner === 1 ? "p1" : "p2");
 
-            if (diceSet === "numbers") {
-              // Zahlenwürfel mit Spieler-spezifischen Farben wie im updateCurrentDieView
-              die.textContent = data.value;
-              die.style.backgroundImage = "none";
-              die.style.background =
-                owner === 1
-                  ? "radial-gradient(circle at 30% 20%, #ff877d, var(--p1-color))"
-                  : "radial-gradient(circle at 30% 20%, #79b5ff, var(--p2-color))";
-              die.style.color = "#fff";
-            } else {
-              // Bildwürfel
-die.textContent = "";
-const imgPath = `img/${diceSet}/${data.value}.png`;
-const img = document.createElement("img");
-img.src = imgPath;
-img.style.width = "100%";
-img.style.height = "100%";
-img.style.objectFit = "contain";
-img.style.borderRadius = "6px";
-img.alt = `Würfel ${data.value}`;
-if (owner === 2) {
-  // Spieler 2 sieht Würfel umgedreht
-  img.style.transform = "rotate(180deg)";
+if (diceSet === "numbers") {
+  // Zahlenwürfel mit Spieler-spezifischen Farben wie im updateCurrentDieView
+  die.textContent = data.value;
+  die.style.backgroundImage = "none";
+  die.style.background =
+    owner === 1
+      ? "radial-gradient(circle at 30% 20%, #ff877d, var(--p1-color))"
+      : "radial-gradient(circle at 30% 20%, #79b5ff, var(--p2-color))";
+  die.style.color = "#fff";
+  if (owner === 2) {
+    die.style.transform = "rotate(180deg)";
+  }
+} else {
+  // Bildwürfel
+  die.textContent = "";
+  const imgPath = `img/${diceSet}/${data.value}.png`;
+  const img = document.createElement("img");
+  img.src = imgPath;
+  img.style.width = "100%";
+  img.style.height = "100%";
+  img.style.objectFit = "contain";
+  img.style.borderRadius = "6px";
+  img.alt = `Würfel ${data.value}`;
+  if (owner === 2) {
+    img.style.transform = "rotate(180deg)";
+  }
+  die.appendChild(img);
 }
-die.appendChild(img);
-            }
 
             cellEl.appendChild(die);
           }
@@ -1072,15 +1074,20 @@ die.appendChild(img);
       currentDieBox.classList.remove("empty");
       currentDieBox.style.borderStyle = "solid";
 
-      if (diceSet === "numbers") {
-        currentDieBox.innerHTML = String(cell.value);
-        currentDieBox.style.backgroundImage = "none";
-        currentDieBox.style.background =
-          cell.owner === 1
-            ? "radial-gradient(circle at 30% 20%, #ff877d, var(--p1-color))"
-            : "radial-gradient(circle at 30% 20%, #79b5ff, var(--p2-color))";
-        currentDieBox.style.color = "#fff";
-      } else {
+if (diceSet === "numbers") {
+  currentDieBox.innerHTML = String(cell.value);
+  currentDieBox.style.backgroundImage = "none";
+  currentDieBox.style.background =
+    cell.owner === 1
+      ? "radial-gradient(circle at 30% 20%, #ff877d, var(--p1-color))"
+      : "radial-gradient(circle at 30% 20%, #79b5ff, var(--p2-color))";
+  currentDieBox.style.color = "#fff";
+  if (cell.owner === 2) {
+    currentDieBox.style.transform = "rotate(180deg)";
+  } else {
+    currentDieBox.style.transform = "none";
+  }
+} else {
 currentDieBox.innerHTML = "";
 const imgPath = `img/${diceSet}/${cell.value}.png`;
 const img = document.createElement("img");
