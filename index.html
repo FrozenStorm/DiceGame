@@ -431,6 +431,19 @@
       }
     }
 
+    /* rules overlay button mirroring */
+    #rules-overlay.player2 #rules-prev,
+    #rules-overlay.player2 #rules-next {
+      transform: scaleX(-1);
+    }
+    #rules-overlay.player2 #btn-close-rules {
+      transform: rotate(180deg);
+    }
+    #rules-overlay.player2 {
+      flex-direction: column-reverse; /* close button on top */
+    }
+    /* prev/next stay on left/right; only icons are mirrored */
+
 
 
     /* Responsive Layout für schmale Displays */
@@ -450,15 +463,27 @@
       }
 
       /* when panel is horizontal put Aufwerten button on the right */
-      .btn-up-card { order: 3; }
-      .current-die-card { order: 2; }
+      .card-player1 { order: 0; }
       .btn-down-card { order: 1; }
+      .current-die-card { order: 2; }
+      .btn-up-card { order: 3; }
+      .card-player2 { order: 4; }
     }
   </style>
 </head>
 <body>
   <div id="app">
-    <!-- Lobby / Neustart mit Würfel-Set-Auswahl -->
+    <!-- Rules/Karten Overlay -->
+    <div id="rules-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center;">
+      <div style="flex: 1; display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 20px;">
+        <div id="rules-prev" style="width: 60px; height: 60px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--accent); user-select: none;">◀</div>
+        <div style="flex: 1; display: flex; align-items: center; justify-content: center; max-width: 90%;">
+          <img id="rules-image" src="" style="max-width: 100%; max-height: 80vh; object-fit: contain;" alt="Rules">
+        </div>
+        <div id="rules-next" style="width: 60px; height: 60px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--accent); user-select: none;">▶</div>
+      </div>
+      <button class="btn primary" id="btn-close-rules" style="margin-bottom: 40px; padding: 10px 20px; font-size: 1rem;">Zurück zum Spiel</button>
+    </div>
     <div id="lobby-overlay">
       <h1>2‑Spieler‑Würfelspiel</h1>
       <p>Lokales Spiel auf einem Gerät. Wähle pro Spieler ein Würfel‑Set und starte das Match.</p>
@@ -534,6 +559,9 @@
 
       <!-- Untere Side-Panel -->
       <div class="side-panel">
+        <div class="side-card card-player2">
+          <button class="btn" id="btn-player2-cards">Spieler 2<br />Karten</button>
+        </div>
         <div class="side-card btn-up-card">
             <button class="btn primary" id="btn-die-plus">+</button>
         </div>
@@ -550,6 +578,9 @@
         </div>
         <div class="side-card btn-down-card">
           <button class="btn primary" id="btn-die-minus">-</button>
+        </div>
+        <div class="side-card card-player1">
+          <button class="btn" id="btn-player1-cards">Spieler 1<br />Karten</button>
         </div>
       </div>
     </div>
@@ -1144,6 +1175,72 @@ currentDieBox.appendChild(img);
       setStatus("Spieler 1 ist am Zug.");
     }
 
+    // --- Rules/Karten Overlay ---
+
+    let rulesState = {
+      currentPlayer: null,
+      currentImageIndex: 0,
+      images: []
+    };
+
+    // Verfügbare Bilder pro Set (angenommen: rules-1.png bis rules-6.png)
+    const RULES_PER_SET = {
+      "numbers": [1, 2, 3, 4, 5, 6],
+      "Set1": [1, 2, 3, 4, 5, 6],
+      "Set2": [1, 2, 3, 4, 5, 6],
+      "Set3": [1, 2, 3, 4, 5, 6],
+      "Set4": [1, 2, 3, 4, 5, 6],
+      "Set5": [1, 2, 3, 4, 5, 6],
+      "Set6": [1, 2, 3, 4, 5, 6],
+    };
+
+    function openRulesOverlay(player) {
+      const diceSet = state.players[player].diceSet || "numbers";
+      const imageList = RULES_PER_SET[diceSet] || [1, 2, 3, 4, 5, 6];
+      const folder = diceSet === "numbers" ? "numbers" : diceSet;
+      
+      rulesState.currentPlayer = player;
+      rulesState.currentImageIndex = 0;
+      rulesState.images = imageList.map(i => `img/${folder}/rules/rules-${i}.png`);
+      
+      const overlay = document.getElementById("rules-overlay");
+      overlay.style.display = "flex";
+      overlay.classList.toggle("player2", state.currentPlayer === 2);
+      
+      showRulesImage();
+    }
+
+    function closeRulesOverlay() {
+      const overlay = document.getElementById("rules-overlay");
+      overlay.style.display = "none";
+    }
+
+    function showRulesImage() {
+      if (rulesState.images.length === 0) return;
+      
+      const img = document.getElementById("rules-image");
+      const imagePath = rulesState.images[rulesState.currentImageIndex];
+      img.src = imagePath;
+      
+      // Rotation abhängig vom aktuellen Spieler: 
+      // Spieler 2 sitzt oben, daher Bilder drehen, damit er sie richtig herum sieht
+      if (state.currentPlayer === 2) {
+        img.style.transform = "rotate(180deg)";
+      } else {
+        img.style.transform = "none";
+      }
+    }
+
+    function nextRulesImage() {
+      rulesState.currentImageIndex = (rulesState.currentImageIndex + 1) % rulesState.images.length;
+      showRulesImage();
+    }
+
+    function prevRulesImage() {
+      rulesState.currentImageIndex = (rulesState.currentImageIndex - 1 + rulesState.images.length) % rulesState.images.length;
+      showRulesImage();
+    }
+
     // --- Event-Handler für Reserve/Exil etc. ---
 
     function attachBoardListeners() {
@@ -1265,6 +1362,34 @@ currentDieBox.appendChild(img);
       document
         .getElementById("btn-die-minus")
         .addEventListener("click", () => rotateSelectedDie(-1));
+
+      document
+        .getElementById("btn-player1-cards")
+        .addEventListener("click", () => openRulesOverlay(1));
+      document
+        .getElementById("btn-player2-cards")
+        .addEventListener("click", () => openRulesOverlay(2));
+
+      document
+        .getElementById("btn-close-rules")
+        .addEventListener("click", closeRulesOverlay);
+
+      document
+        .getElementById("rules-prev")
+        .addEventListener("click", prevRulesImage);
+      document
+        .getElementById("rules-next")
+        .addEventListener("click", nextRulesImage);
+
+      // also support clicking left/right half of the image itself
+      document
+        .getElementById("rules-image")
+        .addEventListener("click", (e) => {
+          const rect = e.target.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          if (x < rect.width / 2) prevRulesImage();
+          else nextRulesImage();
+        });
     }
 
     // --- Init ---
