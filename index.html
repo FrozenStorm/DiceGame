@@ -491,6 +491,15 @@
       <div id="lobby-config">
         <div class="lobby-player-config">
           <label>
+            Spielmodus
+            <select id="game-mode-select">
+              <option value="solo">Solo</option>
+              <option value="duel">Duell</option>
+            </select>
+          </label>
+        </div>
+        <div class="lobby-player-config">
+          <label>
             Spieler 1 – Würfel‑Set
             <select id="p1-dice-set"></select>
           </label>
@@ -641,6 +650,7 @@
     const state = {
       currentPlayer: 1,
       gameOver: false,
+      gameMode: "duel",
       board: [],
       players: {
         1: { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: "numbers" },
@@ -776,7 +786,7 @@ if (diceSet === "numbers") {
       ? "radial-gradient(circle at 30% 20%, #ff877d, var(--p1-color))"
       : "radial-gradient(circle at 30% 20%, #79b5ff, var(--p2-color))";
   die.style.color = "#fff";
-  if (owner === 2) {
+  if (state.gameMode === "duel" && owner === 2) {
     die.style.transform = "rotate(180deg)";
   }
 } else {
@@ -790,7 +800,7 @@ if (diceSet === "numbers") {
   img.style.objectFit = "contain";
   img.style.borderRadius = "6px";
   img.alt = `Würfel ${data.value}`;
-  if (owner === 2) {
+  if (state.gameMode === "duel" && owner === 2) {
     img.style.transform = "rotate(180deg)";
   }
   die.appendChild(img);
@@ -1082,7 +1092,7 @@ if (diceSet === "numbers") {
       ? "radial-gradient(circle at 30% 20%, #ff877d, var(--p1-color))"
       : "radial-gradient(circle at 30% 20%, #79b5ff, var(--p2-color))";
   currentDieBox.style.color = "#fff";
-  if (cell.owner === 2) {
+  if (state.gameMode === "duel" && cell.owner === 2) {
     currentDieBox.style.transform = "rotate(180deg)";
   } else {
     currentDieBox.style.transform = "none";
@@ -1097,7 +1107,7 @@ img.style.height = "100%";
 img.style.objectFit = "contain";
 img.style.borderRadius = "6px";
 img.alt = `Würfel ${cell.value}`;
-if (cell.owner === 2) {
+if (state.gameMode === "duel" && cell.owner === 2) {
   img.style.transform = "rotate(180deg)";
 }
 currentDieBox.appendChild(img);
@@ -1166,11 +1176,14 @@ currentDieBox.appendChild(img);
     function startNewGame() {
       const p1Select = document.getElementById("p1-dice-set");
       const p2Select = document.getElementById("p2-dice-set");
+      const gameModeSelect = document.getElementById("game-mode-select");
       const p1Set = p1Select ? p1Select.value : "numbers";
       const p2Set = p2Select ? p2Select.value : "numbers";
+      const gameMode = gameModeSelect ? gameModeSelect.value : "duel";
 
       state.currentPlayer = 1;
       state.gameOver = false;
+      state.gameMode = gameMode;
       state.players[1] = { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: p1Set };
       state.players[2] = { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: p2Set };
 
@@ -1212,7 +1225,7 @@ currentDieBox.appendChild(img);
       
       const overlay = document.getElementById("rules-overlay");
       overlay.style.display = "flex";
-      overlay.classList.toggle("player2", state.currentPlayer === 2);
+      overlay.classList.toggle("player2", state.gameMode === "duel" && state.currentPlayer === 2);
       
       showRulesImage();
     }
@@ -1229,9 +1242,9 @@ currentDieBox.appendChild(img);
       const imagePath = rulesState.images[rulesState.currentImageIndex];
       img.src = imagePath;
       
-      // Rotation abhängig vom aktuellen Spieler: 
-      // Spieler 2 sitzt oben, daher Bilder drehen, damit er sie richtig herum sieht
-      if (state.currentPlayer === 2) {
+      // Rotation abhängig vom aktuellen Spieler und Spielmodus:
+      // Im Duell-Modus sitzt Spieler 2 oben, daher Bilder drehen, damit er sie richtig herum sieht
+      if (state.gameMode === "duel" && state.currentPlayer === 2) {
         img.style.transform = "rotate(180deg)";
       } else {
         img.style.transform = "none";
