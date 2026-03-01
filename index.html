@@ -1123,6 +1123,11 @@ if (diceSet === "numbers") {
       const nextIndex = (index + 1) % FIELD_TYPES.length;
       cell.type = FIELD_TYPES[nextIndex];
       updateBoardDOM();
+      
+      // Zustand an anderen Spieler senden
+      if (state.gameMode === "online") {
+        sendGameState();
+      }
     }
 
     function onReserveClick(player) {
@@ -1718,19 +1723,17 @@ currentDieBox.appendChild(img);
     }
 
     function handleRemoteGameState(data) {
-      // Nur wenn wir NICHT am Zug sind, State updaten
-      if (state.currentPlayer !== onlineState.localPlayer) {
-        state.board = data.state.board;
-        state.players = data.state.players;
-        state.currentPlayer = data.currentPlayer;
-        state.selected = data.selected;
-        state.roundNumber = data.state.roundNumber;
-        
-        updateBoardDOM();
-        refreshPlayerPanels();
-        updateRoundDisplay();
-        setStatus("Spieler " + state.currentPlayer + " ist am Zug.");
-      }
+      // State updaten, unabhängig davon, wer am Zug ist
+      state.board = data.state.board;
+      state.players = data.state.players;
+      state.currentPlayer = data.currentPlayer;
+      state.selected = data.selected;
+      state.roundNumber = data.state.roundNumber;
+      
+      updateBoardDOM();
+      refreshPlayerPanels();
+      updateRoundDisplay();
+      setStatus("Spieler " + state.currentPlayer + " ist am Zug.");
     }
 
     function updatePerspective() {
