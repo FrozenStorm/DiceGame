@@ -445,6 +445,43 @@
     }
     /* prev/next stay on left/right; only icons are mirrored */
 
+    /* Online Mode - Player 2 Perspective */
+    #app.online-player2 {
+      transform: rotate(180deg);
+    }
+
+    #app.online-player2 .player-zone {
+      transform: rotate(180deg);
+    }
+
+    #app.online-player2 #middle {
+      transform: rotate(180deg);
+    }
+
+    #app.online-player2 .side-panel {
+      transform: rotate(180deg);
+    }
+
+    #app.online-player2 .side-card {
+      transform: rotate(180deg);
+    }
+
+    #app.online-player2 #board {
+      transform: rotate(180deg);
+    }
+
+    #app.online-player2 .die {
+      transform: rotate(180deg);
+    }
+
+    #app.online-player2 .current-die-box {
+      transform: rotate(180deg);
+    }
+
+    #app.online-player2 .bonus-label {
+      transform: rotate(180deg);
+    }
+
 
 
     /* Responsive Layout für schmale Displays */
@@ -1352,6 +1389,7 @@ currentDieBox.appendChild(img);
     });
 
     document.getElementById("btn-lobby").addEventListener("click", () => {
+      document.getElementById("app").classList.remove("online-player2");
       lobbyOverlay.style.display = "flex";
     });
 
@@ -1695,6 +1733,15 @@ currentDieBox.appendChild(img);
       }
     }
 
+    function updatePerspective() {
+      const app = document.getElementById("app");
+      if (state.gameMode === "online" && onlineState.localPlayer === 2) {
+        app.classList.add("online-player2");
+      } else {
+        app.classList.remove("online-player2");
+      }
+    }
+
     async function startGameAsHost(p1Set, p2Set) {
       await initPeer();
       document.getElementById("host-peer-id").textContent = onlineState.myPeerId;
@@ -1722,6 +1769,7 @@ currentDieBox.appendChild(img);
           updateBoardDOM();
           refreshPlayerPanels();
           updateRoundDisplay();
+          updatePerspective();
           clearSelection();
           setStatus("Spieler 1 ist am Zug. Warte auf Mitspieler...");
           
@@ -1764,6 +1812,7 @@ currentDieBox.appendChild(img);
             updateBoardDOM();
             refreshPlayerPanels();
             updateRoundDisplay();
+            updatePerspective();
             clearSelection();
             setStatus("Mit Host verbunden. Warte auf Spielstart...");
             
@@ -1790,6 +1839,7 @@ currentDieBox.appendChild(img);
       onlineState.isHost = false;
       onlineState.isJoining = false;
       
+      document.getElementById("app").classList.remove("online-player2");
       document.getElementById("online-host-overlay").style.display = "none";
       document.getElementById("online-join-overlay").style.display = "none";
       document.getElementById("lobby-overlay").style.display = "flex";
