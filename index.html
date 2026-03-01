@@ -578,6 +578,7 @@
         <div class="side-card">
           <h2>Spielzustand</h2>
           <div class="status-text" id="status-text">Spieler 1 ist am Zug.</div>
+          <div class="status-text" id="round-text" style="margin-top: 8px; font-size: 0.75rem; color: var(--muted);">Runde: 1</div>
         </div>
         <div class="side-card">
           <!-- <h2>Zug</h2> -->
@@ -681,6 +682,7 @@
         2: { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: "numbers" },
       },
       selected: null,
+      roundNumber: 1,
     };
 
     const boardEl = document.getElementById("board");
@@ -1301,15 +1303,26 @@ currentDieBox.appendChild(img);
 
     function endTurn() {
       if (state.gameOver) return;
+      
+      // Wenn Spieler 2 seinen Zug beendet, Runde erhöhen
+      if (state.currentPlayer === 2) {
+        state.roundNumber++;
+      }
+      
       state.currentPlayer = state.currentPlayer === 1 ? 2 : 1;
       clearSelection();
       setStatus("Spieler " + state.currentPlayer + " ist am Zug.");
+      updateRoundDisplay();
       refreshPlayerPanels();
       
       // In Online-Modus: Zustand an anderen Spieler senden
       if (state.gameMode === "online") {
         sendGameState();
       }
+    }
+
+    function updateRoundDisplay() {
+      document.getElementById("round-text").textContent = "Runde: " + state.roundNumber;
     }
 
     // --- Lobby / Würfel-Set-Auswahl ---
@@ -1353,6 +1366,7 @@ currentDieBox.appendChild(img);
       state.currentPlayer = 1;
       state.gameOver = false;
       state.gameMode = gameMode;
+      state.roundNumber = 1;
       state.players[1] = { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: p1Set };
       state.players[2] = { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: p2Set };
 
@@ -1360,6 +1374,7 @@ currentDieBox.appendChild(img);
       buildBoardDOM();
       updateBoardDOM();
       refreshPlayerPanels();
+      updateRoundDisplay();
       clearSelection();
       setStatus("Spieler 1 ist am Zug.");
     }
@@ -1671,9 +1686,11 @@ currentDieBox.appendChild(img);
         state.players = data.state.players;
         state.currentPlayer = data.currentPlayer;
         state.selected = data.selected;
+        state.roundNumber = data.state.roundNumber;
         
         updateBoardDOM();
         refreshPlayerPanels();
+        updateRoundDisplay();
         setStatus("Spieler " + state.currentPlayer + " ist am Zug.");
       }
     }
@@ -1696,6 +1713,7 @@ currentDieBox.appendChild(img);
           state.currentPlayer = 1;
           state.gameOver = false;
           state.gameMode = "online";
+          state.roundNumber = 1;
           state.players[1] = { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: p1Set };
           state.players[2] = { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: p2Set };
           
@@ -1703,6 +1721,7 @@ currentDieBox.appendChild(img);
           buildBoardDOM();
           updateBoardDOM();
           refreshPlayerPanels();
+          updateRoundDisplay();
           clearSelection();
           setStatus("Spieler 1 ist am Zug. Warte auf Mitspieler...");
           
@@ -1736,6 +1755,7 @@ currentDieBox.appendChild(img);
             state.currentPlayer = 1;
             state.gameOver = false;
             state.gameMode = "online";
+            state.roundNumber = 1;
             state.players[1] = { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: p1Set };
             state.players[2] = { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: p2Set };
             
@@ -1743,6 +1763,7 @@ currentDieBox.appendChild(img);
             buildBoardDOM();
             updateBoardDOM();
             refreshPlayerPanels();
+            updateRoundDisplay();
             clearSelection();
             setStatus("Mit Host verbunden. Warte auf Spielstart...");
             
