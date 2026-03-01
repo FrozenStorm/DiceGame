@@ -1664,7 +1664,13 @@ currentDieBox.appendChild(img);
 
     function initPeer() {
       return new Promise((resolve) => {
-        onlineState.peer = new Peer();
+        onlineState.peer = new Peer({
+          config: {
+            iceServers: [
+              { urls: "stun:stun.l.google.com:19302" }
+            ]
+          }
+        });
         onlineState.peer.on("open", (id) => {
           onlineState.myPeerId = id;
           resolve(id);
