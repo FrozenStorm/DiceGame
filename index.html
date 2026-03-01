@@ -1679,6 +1679,12 @@ currentDieBox.appendChild(img);
       conn.on("open", () => {
         onlineState.connection = conn;
         onlineState.remotePeerId = conn.peer;
+        // sobald der zweite Spieler verbunden ist, verschwinden die Wartehinweise
+        if (state.gameMode === "online" && onlineState.isHost) {
+          setStatus("Spieler " + state.currentPlayer + " ist am Zug.");
+          // gleich den aktuellen Zustand an den neuen Spieler senden
+          sendGameState();
+        }
       });
       conn.on("data", (data) => {
         handleRemoteGameState(data);
