@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>Zweispieler-Würfelspiel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <style>
     :root {
       --p1-color: #d9534f;
@@ -473,6 +474,27 @@
 </head>
 <body>
   <div id="app">
+    <!-- Online Host Overlay -->
+    <div id="online-host-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; gap: 20px;">
+      <h2 style="margin: 0; font-size: 1.2rem;">Online – Host</h2>
+      <p style="margin: 0; color: var(--muted); font-size: 0.9rem;">Deine Verbindungs-ID:</p>
+      <div style="background: #1c1c1c; border-radius: 8px; padding: 20px; border: 2px solid var(--accent); text-align: center;">
+        <div style="font-size: 1.5rem; font-family: monospace; font-weight: bold; color: var(--accent);" id="host-peer-id">Verbindung wird hergestellt...</div>
+      </div>
+      <p style="margin: 0; color: var(--muted); font-size: 0.8rem; max-width: 300px; text-align: center;">Teile diese ID mit deinem Mitspieler, damit er sich verbinden kann.</p>
+      <button class="btn primary" id="btn-start-as-host" style="padding: 10px 20px; font-size: 1rem;">OK – Spiel starten</button>
+      <button class="btn" id="btn-cancel-host" style="padding: 10px 20px; font-size: 1rem;">Abbrechen</button>
+    </div>
+
+    <!-- Online Join Overlay -->
+    <div id="online-join-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; gap: 20px;">
+      <h2 style="margin: 0; font-size: 1.2rem;">Online – Join</h2>
+      <p style="margin: 0; color: var(--muted); font-size: 0.9rem;">Gib die Host-ID ein:</p>
+      <input type="text" id="join-peer-id-input" placeholder="z.B. abc123xyz" style="border-radius: 4px; border: 1px solid #333; background: #000; color: var(--text); padding: 8px 12px; font-size: 1rem; width: 200px; text-align: center;">
+      <button class="btn primary" id="btn-join-peer" style="padding: 10px 20px; font-size: 1rem;">OK – Verbinden</button>
+      <button class="btn" id="btn-cancel-join" style="padding: 10px 20px; font-size: 1rem;">Abbrechen</button>
+    </div>
+
     <!-- Rules/Karten Overlay -->
     <div id="rules-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center;">
       <div style="flex: 1; display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 20px;">
@@ -495,6 +517,8 @@
             <select id="game-mode-select">
               <option value="solo">Solo</option>
               <option value="duel">Duell</option>
+              <option value="online-host">Online – Host</option>
+              <option value="online-join">Online – Join</option>
             </select>
           </label>
         </div>
@@ -862,6 +886,89 @@ if (diceSet === "numbers") {
         currentZone.style.outline = "2px solid var(--accent)";
         currentZone.style.outlineOffset = "-2px";
       }
+      
+      // Online-Modus: Elemente für inaktiven Spieler deaktivieren
+      updateOnlineUIState();
+    }
+
+    function updateOnlineUIState() {
+      if (state.gameMode !== "online") {
+        enableAllGameElements();
+        return;
+      }
+      
+      if (state.currentPlayer === onlineState.localPlayer) {
+        // Aktueller Spieler: alle Elemente aktiv
+        enableAllGameElements();
+      } else {
+        // Nicht-aktueller Spieler: nur bestimmte Buttons aktiv
+        disableGameElementsForInactivePlayer();
+      }
+    }
+
+    function enableAllGameElements() {
+      // Board-Zellen
+      document.querySelectorAll(".cell").forEach(cell => {
+        cell.style.pointerEvents = "auto";
+        cell.style.opacity = "1";
+      });
+      
+      // Reserve und Exil
+      document.querySelectorAll(".block.clickable").forEach(block => {
+        block.style.pointerEvents = "auto";
+        block.style.opacity = "1";
+      });
+      
+      // Counter-Buttons
+      document.querySelectorAll("button[data-counter]").forEach(btn => {
+        btn.disabled = false;
+        btn.style.opacity = "1";
+      });
+      
+      // End Turn Button
+      document.getElementById("btn-end-turn").disabled = false;
+      document.getElementById("btn-end-turn").style.opacity = "1";
+      
+      // Dice Plus/Minus Buttons
+      document.getElementById("btn-die-plus").disabled = false;
+      document.getElementById("btn-die-plus").style.opacity = "1";
+      document.getElementById("btn-die-minus").disabled = false;
+      document.getElementById("btn-die-minus").style.opacity = "1";
+    }
+
+    function disableGameElementsForInactivePlayer() {
+      // Board-Zellen deaktivieren
+      document.querySelectorAll(".cell").forEach(cell => {
+        cell.style.pointerEvents = "none";
+        cell.style.opacity = "0.5";
+      });
+      
+      // Reserve und Exil deaktivieren
+      document.querySelectorAll(".block.clickable").forEach(block => {
+        block.style.pointerEvents = "none";
+        block.style.opacity = "0.5";
+      });
+      
+      // Counter-Buttons deaktivieren
+      document.querySelectorAll("button[data-counter]").forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = "0.5";
+      });
+      
+      // End Turn Button deaktivieren
+      document.getElementById("btn-end-turn").disabled = true;
+      document.getElementById("btn-end-turn").style.opacity = "0.5";
+      
+      // Dice Plus/Minus Buttons deaktivieren
+      document.getElementById("btn-die-plus").disabled = true;
+      document.getElementById("btn-die-plus").style.opacity = "0.5";
+      document.getElementById("btn-die-minus").disabled = true;
+      document.getElementById("btn-die-minus").style.opacity = "0.5";
+      
+      // Die folgenden Buttons BLEIBEN aktiv:
+      // - btn-player1-cards
+      // - btn-player2-cards
+      // - btn-lobby (eigentlich: zurück zur Lobby)
     }
 
     function renderMiniDice(containerId, count) {
@@ -893,6 +1000,12 @@ if (diceSet === "numbers") {
 
     function onCellClick(r, c) {
       if (state.gameOver) return;
+      
+      // Im Online-Modus: nur eigener Spieler darf Züge machen
+      if (state.gameMode === "online" && state.currentPlayer !== onlineState.localPlayer) {
+        return;
+      }
+      
       const cell = state.board[r][c];
       const hasDie = cell.owner !== null;
 
@@ -922,6 +1035,11 @@ if (diceSet === "numbers") {
             from.value = null;
             clearSelection();
             updateBoardDOM();
+            
+            // Zustand an anderen Spieler senden
+            if (state.gameMode === "online") {
+              sendGameState();
+            }
             return;
           }
         }
@@ -935,6 +1053,11 @@ if (diceSet === "numbers") {
             clearSelection();
             refreshPlayerPanels();
             updateBoardDOM();
+            
+            // Zustand an anderen Spieler senden
+            if (state.gameMode === "online") {
+              sendGameState();
+            }
             return;
           }
         }
@@ -947,6 +1070,11 @@ if (diceSet === "numbers") {
             clearSelection();
             refreshPlayerPanels();
             updateBoardDOM();
+            
+            // Zustand an anderen Spieler senden
+            if (state.gameMode === "online") {
+              sendGameState();
+            }
             return;
           }
         }
@@ -1008,6 +1136,11 @@ if (diceSet === "numbers") {
       clearSelection();
       refreshPlayerPanels();
       updateBoardDOM();
+      
+      // Zustand an anderen Spieler senden
+      if (state.gameMode === "online") {
+        sendGameState();
+      }
     }
 
     function moveSelectedBoardDieToExile(player) {
@@ -1022,6 +1155,11 @@ if (diceSet === "numbers") {
       clearSelection();
       refreshPlayerPanels();
       updateBoardDOM();
+      
+      // Zustand an anderen Spieler senden
+      if (state.gameMode === "online") {
+        sendGameState();
+      }
     }
 
     function moveReserveToExile(player) {
@@ -1030,6 +1168,11 @@ if (diceSet === "numbers") {
       state.players[player].exile++;
       clearSelection();
       refreshPlayerPanels();
+      
+      // Zustand an anderen Spieler senden
+      if (state.gameMode === "online") {
+        sendGameState();
+      }
     }
 
     function moveExileToReserve(player) {
@@ -1038,10 +1181,21 @@ if (diceSet === "numbers") {
       state.players[player].reserve++;
       clearSelection();
       refreshPlayerPanels();
+      
+      // Zustand an anderen Spieler senden
+      if (state.gameMode === "online") {
+        sendGameState();
+      }
     }
 
     function rotateSelectedDie(delta) {
       if (state.gameOver) return;
+      
+      // Im Online-Modus: nur eigener Spieler darf Züge machen
+      if (state.gameMode === "online" && state.currentPlayer !== onlineState.localPlayer) {
+        return;
+      }
+      
       if (!state.selected || state.selected.type !== "board") return;
       const { row, col } = state.selected;
       const cell = state.board[row][col];
@@ -1052,6 +1206,11 @@ if (diceSet === "numbers") {
       cell.value = v;
       updateBoardDOM();
       updateCurrentDieView();
+      
+      // Zustand an anderen Spieler senden
+      if (state.gameMode === "online") {
+        sendGameState();
+      }
     }
 
     function updateCurrentDieView() {
@@ -1133,6 +1292,11 @@ currentDieBox.appendChild(img);
         state.gameOver = true;
         setStatus("Spieler " + player + " hat gewonnen!");
       }
+      
+      // Zustand an anderen Spieler senden
+      if (state.gameMode === "online") {
+        sendGameState();
+      }
     }
 
     function endTurn() {
@@ -1141,6 +1305,11 @@ currentDieBox.appendChild(img);
       clearSelection();
       setStatus("Spieler " + state.currentPlayer + " ist am Zug.");
       refreshPlayerPanels();
+      
+      // In Online-Modus: Zustand an anderen Spieler senden
+      if (state.gameMode === "online") {
+        sendGameState();
+      }
     }
 
     // --- Lobby / Würfel-Set-Auswahl ---
@@ -1420,6 +1589,227 @@ currentDieBox.appendChild(img);
     refreshPlayerPanels();
     attachBoardListeners();
     initLobbyDiceSets();
+
+    // --- Online Mode / PeerJS ---
+
+    const onlineState = {
+      peer: null,
+      connection: null,
+      isHost: false,
+      isJoining: false,
+      myPeerId: null,
+      remotePeerId: null,
+      localPlayer: null,
+    };
+
+    function initPeer() {
+      return new Promise((resolve) => {
+        onlineState.peer = new Peer();
+        onlineState.peer.on("open", (id) => {
+          onlineState.myPeerId = id;
+          resolve(id);
+        });
+        onlineState.peer.on("connection", (conn) => {
+          handleIncomingConnection(conn);
+        });
+      });
+    }
+
+    function handleIncomingConnection(conn) {
+      conn.on("open", () => {
+        onlineState.connection = conn;
+        onlineState.remotePeerId = conn.peer;
+      });
+      conn.on("data", (data) => {
+        handleRemoteGameState(data);
+      });
+      conn.on("close", () => {
+        alert("Verbindung zum Mitspieler unterbrochen!");
+        goBackToLobby();
+      });
+      conn.on("error", (err) => {
+        console.error("Connection error:", err);
+      });
+    }
+
+    function connectToHost(hostPeerId) {
+      return new Promise((resolve, reject) => {
+        const conn = onlineState.peer.connect(hostPeerId);
+        conn.on("open", () => {
+          onlineState.connection = conn;
+          onlineState.remotePeerId = hostPeerId;
+          resolve();
+        });
+        conn.on("data", (data) => {
+          handleRemoteGameState(data);
+        });
+        conn.on("close", () => {
+          alert("Verbindung zum Host unterbrochen!");
+          goBackToLobby();
+        });
+        conn.on("error", (err) => {
+          reject(err);
+        });
+      });
+    }
+
+    function sendGameState() {
+      if (onlineState.connection && onlineState.connection.open) {
+        const gameData = {
+          state: state,
+          currentPlayer: state.currentPlayer,
+          selected: state.selected,
+        };
+        onlineState.connection.send(gameData);
+      }
+    }
+
+    function handleRemoteGameState(data) {
+      // Nur wenn wir NICHT am Zug sind, State updaten
+      if (state.currentPlayer !== onlineState.localPlayer) {
+        state.board = data.state.board;
+        state.players = data.state.players;
+        state.currentPlayer = data.currentPlayer;
+        state.selected = data.selected;
+        
+        updateBoardDOM();
+        refreshPlayerPanels();
+        setStatus("Spieler " + state.currentPlayer + " ist am Zug.");
+      }
+    }
+
+    async function startGameAsHost(p1Set, p2Set) {
+      await initPeer();
+      document.getElementById("host-peer-id").textContent = onlineState.myPeerId;
+      const hostOverlay = document.getElementById("online-host-overlay");
+      hostOverlay.style.display = "flex";
+      
+      return new Promise((resolve) => {
+        document.getElementById("btn-start-as-host").onclick = async () => {
+          onlineState.isHost = true;
+          onlineState.localPlayer = 1;
+          hostOverlay.style.display = "none";
+          
+          const lobbyOverlay = document.getElementById("lobby-overlay");
+          lobbyOverlay.style.display = "none";
+          
+          state.currentPlayer = 1;
+          state.gameOver = false;
+          state.gameMode = "online";
+          state.players[1] = { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: p1Set };
+          state.players[2] = { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: p2Set };
+          
+          initBoardState();
+          buildBoardDOM();
+          updateBoardDOM();
+          refreshPlayerPanels();
+          clearSelection();
+          setStatus("Spieler 1 ist am Zug. Warte auf Mitspieler...");
+          
+          resolve();
+        };
+      });
+    }
+
+    async function startGameAsJoin(p1Set, p2Set) {
+      await initPeer();
+      const joinOverlay = document.getElementById("online-join-overlay");
+      joinOverlay.style.display = "flex";
+      
+      return new Promise((resolve, reject) => {
+        document.getElementById("btn-join-peer").onclick = async () => {
+          const hostId = document.getElementById("join-peer-id-input").value.trim();
+          if (!hostId) {
+            alert("Bitte gib eine Host-ID ein.");
+            return;
+          }
+          
+          try {
+            await connectToHost(hostId);
+            onlineState.isJoining = true;
+            onlineState.localPlayer = 2;
+            joinOverlay.style.display = "none";
+            
+            const lobbyOverlay = document.getElementById("lobby-overlay");
+            lobbyOverlay.style.display = "none";
+            
+            state.currentPlayer = 1;
+            state.gameOver = false;
+            state.gameMode = "online";
+            state.players[1] = { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: p1Set };
+            state.players[2] = { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: p2Set };
+            
+            initBoardState();
+            buildBoardDOM();
+            updateBoardDOM();
+            refreshPlayerPanels();
+            clearSelection();
+            setStatus("Mit Host verbunden. Warte auf Spielstart...");
+            
+            resolve();
+          } catch (err) {
+            alert("Fehler beim Verbinden: " + err);
+            reject(err);
+          }
+        };
+      });
+    }
+
+    function goBackToLobby() {
+      if (onlineState.connection) {
+        onlineState.connection.close();
+      }
+      if (onlineState.peer) {
+        onlineState.peer.destroy();
+        onlineState.peer = null;
+      }
+      onlineState.connection = null;
+      onlineState.myPeerId = null;
+      onlineState.remotePeerId = null;
+      onlineState.isHost = false;
+      onlineState.isJoining = false;
+      
+      document.getElementById("online-host-overlay").style.display = "none";
+      document.getElementById("online-join-overlay").style.display = "none";
+      document.getElementById("lobby-overlay").style.display = "flex";
+    }
+
+    document.getElementById("btn-cancel-host").addEventListener("click", goBackToLobby);
+    document.getElementById("btn-cancel-join").addEventListener("click", goBackToLobby);
+
+    // --- Updated startNewGame to handle online modes ---
+    const originalStartNewGame = startNewGame;
+    startNewGame = async function() {
+      const gameModeSelect = document.getElementById("game-mode-select");
+      const gameMode = gameModeSelect ? gameModeSelect.value : "duel";
+      const p1Select = document.getElementById("p1-dice-set");
+      const p2Select = document.getElementById("p2-dice-set");
+      const p1Set = p1Select ? p1Select.value : "numbers";
+      const p2Set = p2Select ? p2Select.value : "numbers";
+
+      if (gameMode === "online-host") {
+        await startGameAsHost(p1Set, p2Set);
+      } else if (gameMode === "online-join") {
+        await startGameAsJoin(p1Set, p2Set);
+      } else {
+        // Solo oder Duell
+        state.currentPlayer = 1;
+        state.gameOver = false;
+        state.gameMode = gameMode;
+        state.players[1] = { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: p1Set };
+        state.players[2] = { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: p2Set };
+
+        initBoardState();
+        buildBoardDOM();
+        updateBoardDOM();
+        refreshPlayerPanels();
+        clearSelection();
+        setStatus("Spieler 1 ist am Zug.");
+        
+        const lobbyOverlay = document.getElementById("lobby-overlay");
+        lobbyOverlay.style.display = "none";
+      }
+    };
   </script>
 </body>
 </html>
