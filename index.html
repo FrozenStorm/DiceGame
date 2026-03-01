@@ -1664,18 +1664,26 @@ currentDieBox.appendChild(img);
 
     function initPeer() {
       return new Promise((resolve) => {
+        console.log("initPeer: creating Peer with ICE servers");
         onlineState.peer = new Peer({
           config: {
             iceServers: [
-              { urls: "stun:stun.l.google.com:19302" }
+              { urls: "stun:stun.l.google.com:19302" },
+              // public TURN servers for quick testing (no guarantees)
+              { urls: "turn:turn.bistri.com:80" },
+              { urls: "turn:turn.anyfirewall.com:443?transport=tcp" },
+              { urls: "turn:openrelay.metered.ca:80" },
+              { urls: "turn:openrelay.metered.ca:443" }
             ]
           }
         });
         onlineState.peer.on("open", (id) => {
+          console.log("initPeer: peer open with id", id);
           onlineState.myPeerId = id;
           resolve(id);
         });
         onlineState.peer.on("connection", (conn) => {
+          console.log("initPeer: incoming connection from", conn.peer);
           handleIncomingConnection(conn);
         });
       });
@@ -1693,6 +1701,7 @@ currentDieBox.appendChild(img);
         }
       });
       conn.on("data", (data) => {
+        console.log("handleIncomingConnection: received data", data);
         handleRemoteGameState(data);
       });
       conn.on("close", () => {
@@ -1706,8 +1715,18 @@ currentDieBox.appendChild(img);
 
     function connectToHost(hostPeerId) {
       return new Promise((resolve, reject) => {
+        console.log("connectToHost: trying to connect to", hostPeerId);
         const conn = onlineState.peer.connect(hostPeerId);
+        const timeout = setTimeout(() => {
+          const msg = "Timeout beim Verbinden zum Host";
+          console.warn(msg);
+          conn.close();
+          reject(new Error(msg));
+        }, 10000); // 10 Sekunden Timeout
+
         conn.on("open", () => {
+          clearTimeout(timeout);
+          console.log("connectToHost: connection open");
           onlineState.connection = conn;
           onlineState.remotePeerId = hostPeerId;
           resolve();
@@ -1720,6 +1739,8 @@ currentDieBox.appendChild(img);
           goBackToLobby();
         });
         conn.on("error", (err) => {
+          clearTimeout(timeout);
+          console.error("connectToHost error", err);
           reject(err);
         });
       });
@@ -1803,6 +1824,7 @@ currentDieBox.appendChild(img);
       return new Promise((resolve, reject) => {
         document.getElementById("btn-join-peer").onclick = async () => {
           const hostId = document.getElementById("join-peer-id-input").value.trim();
+          console.log("Join button clicked, hostId=", hostId);
           if (!hostId) {
             alert("Bitte gib eine Host-ID ein.");
             return;
@@ -1810,6 +1832,7 @@ currentDieBox.appendChild(img);
           
           try {
             await connectToHost(hostId);
+            console.log("join overlay: connected");
             onlineState.isJoining = true;
             onlineState.localPlayer = 2;
             joinOverlay.style.display = "none";
@@ -1835,6 +1858,7 @@ currentDieBox.appendChild(img);
             
             resolve();
           } catch (err) {
+            console.error("join failed", err);
             alert("Fehler beim Verbinden: " + err);
             reject(err);
           }
