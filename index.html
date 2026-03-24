@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>Zweispieler-Würfelspiel</title>
+  <title>DiceWar</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <style>
@@ -257,28 +257,28 @@
       background: radial-gradient(circle, #777, #222);
     }
 
-    .cell.type-Set1::before {
-      background-image: url("img/Set1/marker.png");
+    .cell.type-LoD::before {
+      background-image: url("img/LoD/marker.png");
     }
 
-    .cell.type-Set2::before {
-      background-image: url("img/Set2/marker.png");
+    .cell.type-RoM::before {
+      background-image: url("img/RoM/marker.png");
     }
 
-    .cell.type-Set3::before {
-      background-image: url("img/Set3/marker.png");
+    .cell.type-BoD::before {
+      background-image: url("img/BoD/marker.png");
     }
 
-    .cell.type-Set4::before {
-      background-image: url("img/Set4/marker.png");
+    .cell.type-RoX::before {
+      background-image: url("img/RoX/marker.png");
     }
 
-    .cell.type-Set5::before {
-      background-image: url("img/Set5/marker.png");
+    .cell.type-KoS::before {
+      background-image: url("img/KoS/marker.png");
     }
-	
-	.cell.type-Set6::before {
-      background-image: url("img/Set6/marker.png");
+
+    .cell.type-DoA::before {
+      background-image: url("img/DoA/marker.png");
     }
 
     .cell-label {
@@ -546,7 +546,7 @@
       <button class="btn primary" id="btn-close-rules" style="margin-bottom: 40px; padding: 10px 20px; font-size: 1rem;">Zurück zum Spiel</button>
     </div>
     <div id="lobby-overlay">
-      <h1>2‑Spieler‑Würfelspiel</h1>
+      <h1>DiceWar</h1>
       <p>Lokales Spiel auf einem Gerät. Wähle pro Spieler ein Würfel‑Set und starte das Match.</p>
 
       <div id="lobby-config">
@@ -691,24 +691,24 @@
     // --- Würfel-Sets: manuell zu deinen /img/<SetName>/ Ordnern passend halten ---
     const DICE_SETS = [
       { id: "numbers", label: "Standard (Zahlen)" },
-      { id: "Set1", label: "Set 1" },
-      { id: "Set2", label: "Set 2" },
-      { id: "Set3", label: "Set 3" },
-      { id: "Set4", label: "Set 4" },
-      { id: "Set5", label: "Set 5" },
-      { id: "Set6", label: "Set 6" }
+      { id: "LoD", label: "Light of Dragons" },
+      { id: "RoM", label: "Roots of Mali" },
+      { id: "BoD", label: "Bond of Demons" },
+      { id: "RoX", label: "Rise of Xeladron" },
+      { id: "KoS", label: "Knights of Steel" },
+      { id: "DoA", label: "Dawn of Awakening" }
     ];
 
     // --- Spielzustand ---
     const SIZE = 7;
     const FIELD_TYPES = [
       "neutral",
-      "Set1",
-      "Set2",
-      "Set3",
-      "Set4",
-      "Set5",
-	  "Set6",
+      "LoD",
+      "RoM",
+      "BoD",
+      "RoX",
+      "KoS",
+      "DoA"
     ];
 
     const state = {
@@ -717,8 +717,8 @@
       gameMode: "duel",
       board: [],
       players: {
-        1: { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: "numbers" },
-        2: { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: "numbers" },
+        1: { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: "LoD" },
+        2: { reserve: 15, exile: 0, trigger: 0, victory: 0, diceSet: "LoD" },
       },
       selected: null,
       roundNumber: 1,
@@ -809,12 +809,12 @@
 
           cellEl.classList.remove(
             "type-neutral",
-            "type-Set1",
-            "type-Set2",
-            "type-Set3",
-            "type-Set4",
-            "type-Set5",
-			"type-Set6",
+            "type-LoD",
+            "type-RoM",
+            "type-BoD",
+            "type-RoX",
+            "type-KoS",
+			      "type-DoA",
             "selected"
           );
           cellEl.classList.add("type-" + data.type);
@@ -857,7 +857,7 @@ if (diceSet === "numbers") {
 } else {
   // Bildwürfel
   die.textContent = "";
-  const imgPath = `img/${diceSet}/${data.value}.png`;
+  const imgPath = state.players[1].diceSet === state.players[2].diceSet && owner === 1? `img/${diceSet}/${data.value}.png` : `img/${diceSet}/${data.value}b.png`;
   const img = document.createElement("img");
   img.src = imgPath;
   img.style.width = "100%";
@@ -881,18 +881,18 @@ if (diceSet === "numbers") {
       switch (type) {
         case "neutral":
           return "";
-        case "Set1":
+        case "LoD":
           return "";
-        case "Set2":
-          return "S2";
-        case "Set3":
-          return "S3";
-        case "Set4":
-          return "S4";
-        case "Set5":
-          return "S5";
-		case "Set6":
-          return "S6";
+        case "RoM":
+          return "";
+        case "BoD":
+          return "";
+        case "RoX":
+          return "";
+        case "KoS":
+          return "";
+        case "DoA":
+          return "";
         default:
           return "";
       }
@@ -1304,7 +1304,7 @@ if (diceSet === "numbers") {
   }
 } else {
 currentDieBox.innerHTML = "";
-const imgPath = `img/${diceSet}/${cell.value}.png`;
+const imgPath = state.players[1].diceSet === state.players[2].diceSet && cell.owner === 1? `img/${diceSet}/${cell.value}.png` : `img/${diceSet}/${cell.value}b.png`;
 const img = document.createElement("img");
 img.src = imgPath;
 img.style.width = "100%";
@@ -1384,7 +1384,7 @@ currentDieBox.appendChild(img);
           opt.textContent = set.label;
           select.appendChild(opt);
         });
-        select.value = "numbers";
+        select.value = "LoD";
       });
     }
 
@@ -1434,14 +1434,15 @@ currentDieBox.appendChild(img);
 
     // Verfügbare Bilder pro Set (angenommen: rules-1.png bis rules-6.png)
     const RULES_PER_SET = {
-      "numbers": [1, 2, 3, 4, 5, 6],
-      "Set1": [1, 2, 3, 4, 5, 6],
-      "Set2": [1, 2, 3, 4, 5, 6],
-      "Set3": [1, 2, 3, 4, 5, 6],
-      "Set4": [1, 2, 3, 4, 5, 6],
-      "Set5": [1, 2, 3, 4, 5, 6],
-      "Set6": [1, 2, 3, 4, 5, 6],
+      "numbers": [1, 2, 3, 4, 5, 6, "marker"],
+      "LoD": [1, 2, 3, 4, 5, 6, "marker"],
+      "RoM": [1, 2, 3, 4, 5, 6, "marker"],
+      "BoD": [1, 2, 3, 4, 5, 6, "marker"],
+      "RoX": [1, 2, 3, 4, 5, 6, "marker"],
+      "KoS": [1, 2, 3, 4, 5, 6, "marker"],
+      "DoA": [1, 2, 3, 4, 5, 6, "marker"],
     };
+    const globalRules = ["zugablauf", "glossar"];
 
     function openRulesOverlay(player) {
       const diceSet = state.players[player].diceSet || "numbers";
@@ -1450,7 +1451,9 @@ currentDieBox.appendChild(img);
       
       rulesState.currentPlayer = player;
       rulesState.currentImageIndex = 0;
-      rulesState.images = imageList.map(i => `img/${folder}/rules/rules-${i}.png`);
+      const setImages = imageList.map(i => `img/${folder}/rules/rules-${i}.png`);
+      const globalImages = globalRules.map(i => `img/global/${i}.png`);
+      rulesState.images = [...setImages, ...globalImages];
       
       const overlay = document.getElementById("rules-overlay");
       overlay.style.display = "flex";
