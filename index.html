@@ -12,11 +12,6 @@
   <link rel="icon" href="icon/android-chrome-192x192.png" sizes="192x192" type="image/png">
   <link rel="icon" href="icon/android-chrome-512x512.png" sizes="512x512" type="image/png">
   <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
-    }
-  </script>
   <style>
     :root {
       --p1-color: #1c1c1c;
@@ -622,8 +617,8 @@
         <button class="btn primary" id="btn-lobby">Zur Lobby</button>
         <!-- Speichern / Laden nebeneinander -->
         <div style="display: flex; gap: 4px; margin-top: 4px;">
-          <button class="btn" id="btn-save" style="flex: 1;">Speichern</button>
-          <button class="btn" id="btn-load" style="flex: 1;">Laden</button>
+          <button class="btn" id="btn-save" style="flex: 1;">💾</button>
+          <button class="btn" id="btn-load" style="flex: 1;">📂</button>
         </div>
         <input type="file" id="load-file-input" accept=".json,application/json" style="display: none;">
       </div>
