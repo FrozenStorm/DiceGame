@@ -619,14 +619,15 @@
       <!-- Obere Side-Panel -->
       <div class="side-panel">
         <div class="side-card">
-          <button class="btn primary" id="btn-lobby">Zur Lobby</button>
-          <!-- NEU: Speichern / Laden -->
-          <button class="btn" id="btn-save" style="margin-top:4px;">Speichern</button>
-          <button class="btn" id="btn-load" style="margin-top:4px;">Laden</button>
-          <input type="file" id="load-file-input" accept=".json,application/json" style="display:none;">
+        <button class="btn primary" id="btn-lobby">Zur Lobby</button>
+        <!-- Speichern / Laden nebeneinander -->
+        <div style="display: flex; gap: 4px; margin-top: 4px;">
+          <button class="btn" id="btn-save" style="flex: 1;">Speichern</button>
+          <button class="btn" id="btn-load" style="flex: 1;">Laden</button>
         </div>
+        <input type="file" id="load-file-input" accept=".json,application/json" style="display: none;">
+      </div>
         <div class="side-card">
-          <h2>Spielzustand</h2>
           <div class="status-text" id="status-text">Spieler 1 ist am Zug.</div>
           <div class="status-text" id="round-text" style="margin-top: 8px; font-size: 0.75rem; color: var(--muted);">Runde: 1</div>
         </div>
@@ -657,9 +658,6 @@
           <div class="current-die-view">
             <div class="current-die-box empty" id="current-die-box">
               Kein<br />Würfel
-            </div>
-            <div id="current-die-info" style="font-size:0.7rem;color:var(--muted);text-align:center;">
-              Wähle Würfel
             </div>
           </div>
         </div>
@@ -741,7 +739,6 @@
     const boardEl = document.getElementById("board");
     const statusTextEl = document.getElementById("status-text");
     const currentDieBox = document.getElementById("current-die-box");
-    const currentDieInfo = document.getElementById("current-die-info");
 
     // --- UNDO/REDO-Historie ---
     const MAX_HISTORY = 200;
@@ -1316,7 +1313,6 @@
         currentDieBox.style.backgroundImage = "none";
         currentDieBox.style.background = "transparent";
         currentDieBox.style.borderStyle = "dashed";
-        currentDieInfo.textContent = "Wähle Würfel";
         currentDieBox.style.transform = "none";
         return;
       }
@@ -1328,7 +1324,6 @@
         currentDieBox.style.backgroundImage = "none";
         currentDieBox.style.background = "transparent";
         currentDieBox.style.borderStyle = "dashed";
-        currentDieInfo.textContent = "Wähle Würfel";
         currentDieBox.style.transform = "none";
         return;
       }
@@ -1372,8 +1367,6 @@
         currentDieBox.style.color = "transparent";
         currentDieBox.style.transform = "none";
       }
-
-      currentDieInfo.textContent = "S " + cell.owner + " –  " + cell.value;
     }
 
     function onCounterButtonClick(counterId, delta) {
