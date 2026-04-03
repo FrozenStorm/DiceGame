@@ -1,0 +1,160 @@
+{
+  "faction": {
+    "id": "demon_of_darkness",
+    "name": "Demon of Darkness",
+    "lore": "A forgotten king of old, haunting villages and putting vast areas of the kingdom under a haunting spell. The air and soil smells rotten and refuses to support any growth.",
+    "power_hierarchy": [
+      6,
+      5,
+      4,
+      3,
+      2,
+      1
+    ],
+    "creatures": [
+      {
+        "level": 6,
+        "name": "Demon of Darkness",
+        "tags": [
+          "demon",
+          "leader",
+          "level_6"
+        ],
+        "movement": null,
+        "attack": null,
+        "spell": {
+          "name": "Alliance",
+          "effect": "Split the Demon of Darkness into 1 Possessed and 1 Swamp Hag. Place the Demon of Darkness into the Reserve and place 1 Reserve Die as Swamp Hag on an adjacent field to the Possessed."
+        },
+        "passives": [
+          {
+            "name": "Bound",
+            "effect": "Receive 1 virtual victory point for each pair of Demon of Darkness and Possessed in the Warlands, irrespective of their position. Example: 2 Demons of Darkness and 2 Possessed = 2 virtual victory points."
+          }
+        ],
+        "defeats": [
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      },
+      {
+        "level": 5,
+        "name": "Gatherer",
+        "tags": [
+          "gnome",
+          "support",
+          "level_5"
+        ],
+        "movement": null,
+        "attack": null,
+        "spell": {
+          "name": "Mercy",
+          "effect": "Place a Reserve Die as Gnome on an adjacent free field."
+        },
+        "passives": [
+          {
+            "name": "Sacrifice",
+            "effect": "Once per move the Gatherer to an adjacent field occupied by an own Gnome: Return the Gnome to the Reserve. You can use an additional action to raise level, move or attack with the Gatherer."
+          }
+        ],
+        "defeats": [
+          4,
+          3,
+          2,
+          1
+        ]
+      },
+      {
+        "level": 4,
+        "name": "Swamp Hag",
+        "tags": [
+          "hag",
+          "support",
+          "level_4"
+        ],
+        "movement": null,
+        "attack": null,
+        "spell": {
+          "name": "Black Magic",
+          "effect": "At the beginning of your turn, provided that at least one of your Swamp Hags is in the Warlands: Put 1 Reserve Die into your Exile and choose one or both options: Use 3 Possessed: Move one of your Possessed by 3 fields over corners. Use 2 Possessed: Increase one of your Possessed by 2 Power Levels."
+        },
+        "passives": [
+          {
+            "name": "Servitude",
+            "effect": "Split the Swamp Hag into 2 Possessed. Place 2 Reserve Dice back to the Reserve or vertically adjacent to the Swamp Hag. Then the Swamp Hag goes to the Reserve."
+          }
+        ],
+        "defeats": [
+          3,
+          2,
+          1
+        ]
+      },
+      {
+        "level": 3,
+        "name": "Hunter of Death",
+        "tags": [
+          "hunter",
+          "mobility",
+          "level_3"
+        ],
+        "movement": "Move the Hunter up to 2 fields. You can't only attack the adjacent fields.",
+        "attack": "Hunter's Path to 2 fields. You can't only attack the adjacent fields.",
+        "spell": null,
+        "passives": [
+          {
+            "name": "Dark Fusion",
+            "effect": "Move your Hunter of Death to the field of another friendly Demon of Darkness. If there is no other Hunter of Death in the Warlands, you may take an additional action."
+          }
+        ],
+        "defeats": [
+          2,
+          1
+        ]
+      },
+      {
+        "level": 2,
+        "name": "Possessed",
+        "tags": [
+          "possessed",
+          "control",
+          "level_2"
+        ],
+        "movement": null,
+        "attack": "Tempt: Opposing creatures with Power Level 3 or higher have to attack the Possessed in the following turn.",
+        "spell": null,
+        "passives": [
+          {
+            "name": "Tempt",
+            "effect": "If there are several opposing creatures adjacent to the Possessed, your opponent can choose which one attacks. If the opponent has no other action and has to choose a different opponent whom he attacks."
+          }
+        ],
+        "defeats": [
+          1
+        ]
+      },
+      {
+        "level": 1,
+        "name": "Gnome",
+        "tags": [
+          "gnome",
+          "defense",
+          "level_1"
+        ],
+        "movement": null,
+        "attack": null,
+        "spell": null,
+        "passives": [
+          {
+            "name": "Protective Aura",
+            "effect": "Creatures with power level 2 or higher cannot attack your adjacent Gnomes."
+          }
+        ],
+        "defeats": []
+      }
+    ]
+  }
+}

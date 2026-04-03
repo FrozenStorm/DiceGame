@@ -1,0 +1,12 @@
+{
+  "location": {
+    "id": "oracle",
+    "name": "The Oracle",
+    "type": "location_card",
+    "setup": "Put the Oracle in the middle of the board. One of your Creatures occupies the Oracle.",
+    "effect": "If one of your Creatures occupies or falls off the Oracle at the end of your turn, get 1 additional Trigger Point each turn long. Creatures that occupy the Oracle cannot raise Power Level.",
+    "special_rules": [
+      "Creatures that occupy the Oracle cannot raise Power Level."
+    ]
+  }
+}

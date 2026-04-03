@@ -1,0 +1,12 @@
+{
+  "location": {
+    "id": "craterers",
+    "name": "The Craterers",
+    "type": "location_card",
+    "setup": "Before Setup Phase, place Crater Tiles as shown in illustration below.",
+    "effect": "Creatures with PL2+ occupying Crater gain 1 VP. PL1 creatures on Crater fields put into Reserve at end of player's turn.",
+    "special_rules": [
+      "Crater Tiles unoccupied initially."
+    ]
+  }
+}

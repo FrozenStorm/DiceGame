@@ -1,0 +1,155 @@
+{
+  "faction": {
+    "id": "erwachen",
+    "name": "Erwachen",
+    "lore": "Es wird erzählt, die Wogen trügen die Geister der Meere. Das Wasser bebt dem Untergang der Linien entgegen. In den Strömen erwacht die Macht, die Macht des Erwachens beginnt.",
+    "power_hierarchy": [
+      6,
+      5,
+      4,
+      3,
+      2,
+      1
+    ],
+    "creatures": [
+      {
+        "level": 6,
+        "name": "Erwachen",
+        "tags": [
+          "awakening",
+          "leader",
+          "level_6"
+        ],
+        "movement": null,
+        "attack": null,
+        "spell": {
+          "name": "Splitter",
+          "effect": "Split Erwachen into 1 Flusswache and 3 Gezeitensucher. Place up to 3 Reserve Dice as Flusswache and Gezeitensucher in line in the Warlands (max 1 per field)."
+        },
+        "passives": [
+          {
+            "name": "Stufe 1 Flusswurf",
+            "effect": "Exile 1 Reserve Die and use 10. Draw 1 Spell card or search Richwebewurf for creatures. Raise 1 Spell die or befriende creature by 1 level."
+          }
+        ],
+        "defeats": [
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      },
+      {
+        "level": 5,
+        "name": "Ohtilia",
+        "tags": [
+          "support",
+          "mobility",
+          "level_5"
+        ],
+        "movement": null,
+        "attack": null,
+        "spell": {
+          "name": "Außer Dem Nebel",
+          "effect": "Except Dem Nebel an adjacent creature: Carry out standard movement with Ohtilia, falls possible."
+        },
+        "passives": [],
+        "defeats": [
+          4,
+          3,
+          2,
+          1
+        ]
+      },
+      {
+        "level": 4,
+        "name": "Wasserweberin",
+        "tags": [
+          "weaver",
+          "summon",
+          "level_4"
+        ],
+        "movement": null,
+        "attack": null,
+        "spell": {
+          "name": "Geister erwebe",
+          "effect": "Spawn 1 Flusswache and 1 Gezeitensucher in the Warlands, vertical adjacent. Exile 1 Reserve Die as Flusswache and 1 as Gezeitensucher."
+        },
+        "passives": [
+          {
+            "name": "Schicksalsweberin",
+            "effect": "Exile 1 Reserve Die and use 2. Raise 1 friendly creature by 1 level or raise 1 Machtstuf."
+          }
+        ],
+        "defeats": [
+          3,
+          2,
+          1
+        ]
+      },
+      {
+        "level": 3,
+        "name": "Flusswache",
+        "tags": [
+          "guard",
+          "pull",
+          "level_3"
+        ],
+        "movement": "Bring friendly creature here by 1 umliegend field.",
+        "attack": null,
+        "spell": null,
+        "passives": [
+          {
+            "name": "Wellenritt",
+            "effect": "Bring befreundete Kreatur here by up to 1 umliegend field or up to 3 angrenzend fields."
+          }
+        ],
+        "defeats": [
+          2,
+          1
+        ]
+      },
+      {
+        "level": 2,
+        "name": "Traumbringer",
+        "tags": [
+          "dream",
+          "disable",
+          "level_2"
+        ],
+        "movement": "Wasserperde moves in any direction up to 3 fields.",
+        "attack": null,
+        "spell": null,
+        "passives": [
+          {
+            "name": "Tieferauchen",
+            "effect": "When Traumbringer is defeated, exhale 2. Opponent's adjacent creatures cannot use Zauberaktionen."
+          }
+        ],
+        "defeats": [
+          1
+        ]
+      },
+      {
+        "level": 1,
+        "name": "Gezeitensucher",
+        "tags": [
+          "tide",
+          "scale",
+          "level_1"
+        ],
+        "movement": null,
+        "attack": null,
+        "spell": null,
+        "passives": [
+          {
+            "name": "Wahrebecher Angriffsaktion",
+            "effect": "Raise Machtstuf of Gezeitensucher of sum all own Gezeitensucher in Warlands."
+          }
+        ],
+        "defeats": []
+      }
+    ]
+  }
+}

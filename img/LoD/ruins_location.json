@@ -1,0 +1,12 @@
+{
+  "location": {
+    "id": "ruins",
+    "name": "The Ruins",
+    "type": "location_card",
+    "setup": "Before Setup Phase, place Ruin Tiles as shown in illustration below.",
+    "alternative_victory_condition": "Alternative Victory Condition: If a player occupies all Ruins simultaneously with his own Creatures, he wins the game at the end of his turn. Creatures that occupy Ruins will be put immediately into Reserve.",
+    "special_rules": [
+		"Power Level 1 creatures on Ruins go to Reserve immediately."
+	  ]
+  }
+}

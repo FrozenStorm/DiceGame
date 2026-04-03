@@ -1,0 +1,158 @@
+{
+  "metadata": {
+    "game": "DiceWar",
+    "language": "de",
+    "version": "0.1.0",
+    "extensible": true,
+    "notes": [
+      "Basis-Regelset ohne Völkerspezifika.",
+      "Erweiterbar durch separate Fraktionsdateien."
+    ]
+  },
+  "core_rules": {
+    "players": 2,
+    "win_points": 10,
+    "setup_power_sum_per_player": 10,
+    "reserve_dice_per_player": 15,
+    "setup_steps": [
+      "Spielbrett auslegen und Platz für weiteres Material freihalten.",
+      "Jeder Spieler wählt ein Volk (Würfelset).",
+      "Alle 15 Spielwürfel kommen in die Reserve.",
+      "Siegpunkt- und Triggerpunktleiste auf 0 setzen.",
+      "Startspieler per Würfelwurf bestimmen.",
+      "Startspieler setzt beliebig viele Würfel in freie Felder der eigenen Versorgungszone, bis insgesamt 10 Machtstufen gesetzt wurden.",
+      "Gegenspieler macht dasselbe."
+    ],
+    "turn_sequence": [
+      "Triggerpunkt-Leiste prüfen.",
+      "Genau eine Standardaktion ausführen.",
+      "Siegpunkt-Leiste prüfen. Sieg bei 10 Punkten."
+    ],
+	"Machtstufen": [
+      6,
+      5,
+      4,
+      3,
+      2,
+      1
+    ],
+    "combat_rule": {
+      "default": "Eine Kreatur mit höherer Machtstufe besiegt alle niedrigeren Machtstufen.",
+      "exception": "Kreaturen der Machtstufe 3 besiegen auch Kreaturen der Machtstufe 6."
+    },
+    "movement_default": "Bewege die gewählte Kreatur auf ein angrenzendes freies Feld. Angrenzend bedeutet horizontal oder vertikal benachbart.",
+    "attack_default": "Bewege die gewählte Kreatur auf ein angrenzendes vom Gegner besetztes Feld. Angriffe sind nur auf Kreaturen niedrigere Machtstufe möglich, außer bei der Machtstufe-3-Ausnahme gegen Stufe 6.",
+    "upgrade_default": "Werte die gewählte Kreatur um 1 Machtstufe auf.",
+    "spell_default": "Nutze den Zauber der gewählten Kreatur. Einige Zauber benötigen Reservewürfel oder Triggerpunkte.",
+    "priority_rule": "Kreaturenfähigkeiten haben gegenüber den allgemeinen Spielregeln Vorrang."
+  },
+  "board": {
+    "warlands_grid": {
+      "rows": 7,
+      "cols": 7
+    },
+    "zones": [
+      {
+        "id": "warlands",
+        "name": "Kriegslande",
+        "description": "Spielfeld mit 7x7 Feldern"
+      },
+      {
+        "id": "supply_zone",
+        "name": "Versorgungszone",
+        "description": "Einstiegsbereich zum Setzen eigener Kreaturen in der Aufbauphase pro Spieler jeweils die ihm nächste Reihe des Spielfelds"
+      },
+      {
+        "id": "field_bonus",
+        "name": "Feldbonus",
+        "description": "Bonuspunktereihen jeweils +3 für die vom aktiven Spieler weitest entfernte Reihe +2 für die Reihe eins näher und +1 für die Reihe noch eins näher"
+      }
+    ]
+  },
+  "resources": {
+    "victory_points": {
+      "name": "Siegpunkte",
+      "description": "Wer zuerst 10 Siegpunkte erreicht, gewinnt."
+    },
+    "trigger_points": {
+      "name": "Triggerpunkte",
+      "description": "Ressource für Zauber oder Spezialeffekte. Hier können bis zu 10 Triggerpunkte gesammelt werden."
+    },
+    "virtual_victory_points": {
+      "name": "Virtuelle Siegpunkte",
+      "description": "Werden wie im Kampf erlangte Siegpunkte gezählt, aber nicht auf der Siegpunktleiste angezeigt und können wenn die entsprechende Bedingungen nicht mehr erfüllt sind wieder verloren gehen."
+    }
+  },
+  "actions": [
+    {
+      "id": "move",
+      "name": "Bewegung",
+      "type": "standard",
+      "effect": "Bewege eine eigene Kreatur auf ein angrenzendes freies Feld."
+    },
+    {
+      "id": "attack",
+      "name": "Angriff",
+      "type": "standard",
+      "effect": "Bewege eine eigene Kreatur auf ein angrenzendes vom Gegner besetztes Feld. Bei Sieg wird die besiegte Kreatur ins Exil gelegt."
+    },
+    {
+      "id": "upgrade",
+      "name": "Aufwertung",
+      "type": "standard",
+      "effect": "Werte eine eigene Kreatur um 1 Machtstufe auf."
+    },
+    {
+      "id": "spell",
+      "name": "Zauber",
+      "type": "standard",
+      "effect": "Nutze den Zauber der gewählten Kreatur."
+    }
+  ],
+  "keywords": [
+    {
+      "term": "angrenzend",
+      "definition": "Die horizontal und vertikal benachbarten Felder."
+    },
+    {
+      "term": "diagonal",
+      "definition": "Die diagonal benachbarten Felder."
+    },
+    {
+      "term": "umliegend",
+      "definition": "Die horizontal, vertikal und diagonal benachbarten Felder."
+    },
+    {
+      "term": "gegnerische Kreatur",
+      "definition": "Alle Kreaturen unter gegnerischer Kontrolle, die sich auf den Kriegslanden befinden."
+    },
+    {
+      "term": "eigene Kreatur",
+      "definition": "Alle Kreaturen unter eigener Kontrolle, die sich auf den Kriegslanden befinden."
+    },
+    {
+      "term": "befreundete Kreatur",
+      "definition": "Alle eigenen Kreaturen außer der gewählten Kreatur selbst."
+    },
+    {
+      "term": "immun_gegen_angriffe",
+      "definition": "Immun gegen gegnerische Angriffe."
+    },
+    {
+      "term": "immun_gegen_zauber",
+      "definition": "Immun gegen gegnerische Zauber."
+    },
+    {
+      "term": "immun_gegen_besonderheiten",
+      "definition": "Immun gegen gegnerische Besonderheiten."
+    }
+  ],
+  "victory": {
+    "primary": "Der Spieler, der zuerst 10 Siegpunkte erreicht, gewinnt das Spiel.",
+    "combat_scoring": "Der Angreifer erhält Siegpunkte in Höhe der Machtstufe der besiegten Kreatur.",
+    "field_bonus_scoring": "Wird in der gegnerischen Spielfeldhälfte besiegt, kommt der entsprechende Feldbonus hinzu.",
+    "alternative": [
+      "Ortskartensieg durch gleichzeitiges Besetzen aller Ruinen."
+    ]
+  }
+}

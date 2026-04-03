@@ -1,0 +1,12 @@
+{
+  "location": {
+    "id": "stromung",
+    "name": "Der Stromung",
+    "type": "location_card",
+    "setup": "Place 3 Fluss-Plättchen in Warlands along Spielmitte. No creatures on them initially.",
+    "effect": "Player controlling most creatures in Stromung gets +1 Zugs in middle of his turn. Deploy creatures from Exile first into Stromung, then Ortplätze. Creatures on Stromungplätze are protected.",
+    "special_rules": [
+      "Strömungsrichtung from middle to edges."
+    ]
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "faction": {
+    "id": "xeladron",
+    "name": "Xeladron",
+    "lore": "Sealed away with the fabric of time itself, he returns with greater destruction than any glacier of destruction.",
+    "power_hierarchy": [
+      6,
+      5,
+      4,
+      3,
+      2,
+      1
+    ],
+    "creatures": [
+      {
+        "level": 6,
+        "name": "Xeladron",
+        "tags": [
+          "xeladron",
+          "leader",
+          "decay",
+          "level_6"
+        ],
+        "movement": null,
+        "attack": null,
+        "spell": {
+          "name": "Decay",
+          "effect": "Split Xeladron into 1 Emissary and 1 Portal Bearer. Place 1 Emissary from Reserve diagonal to Portal Bearer on unoccupied field in own zone, then Xeladron back to Reserve."
+        },
+        "passives": [
+          {
+            "name": "Impact",
+            "effect": "Use 6: Put Xeladron and all surrounding creatures into Exile. Gain 1 Field Bonus VP for every opposing creature put into Exile."
+          },
+          {
+            "name": "Forceful Alliance",
+            "effect": "Gain 1 virtual VP for each pair of Xeladron + Portal in your possession."
+          }
+        ],
+        "defeats": [
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      },
+      {
+        "level": 5,
+        "name": "Enchantress of Gravity",
+        "tags": [
+          "gravity",
+          "pull",
+          "level_5"
+        ],
+        "movement": "Force of Attraction: During movement/attack on diagonal to 1+ opposing creatures, move 1 of them 1 field diagonal adjacent to her.",
+        "attack": "Force of Attraction: During movement/attack on diagonal to 1+ opposing creatures, move 1 of them 1 field diagonal adjacent to her.",
+        "spell": null,
+        "passives": [],
+        "defeats": [
+          4,
+          3,
+          2,
+          1
+        ]
+      },
+      {
+        "level": 4,
+        "name": "Emissary",
+        "tags": [
+          "emissary",
+          "summon",
+          "level_4"
+        ],
+        "movement": null,
+        "attack": null,
+        "spell": {
+          "name": "Energy Circle",
+          "effect": "Beginning of turn, if control ≥1 Portal, 1 Portal Bearer, 1 Emissary: Lose control of 1 if Emissary leaves game and no other under control."
+        },
+        "passives": [
+          {
+            "name": "Dimensional Summoning",
+            "effect": "Put 1 creature from Exile. Then use any number of Power Level to Portal Bearer on board. Place it adjacent to friendly Portal Bearer on board."
+          }
+        ],
+        "defeats": [
+          3,
+          2,
+          1
+        ]
+      },
+      {
+        "level": 3,
+        "name": "Portal Guardian",
+        "tags": [
+          "guardian",
+          "split",
+          "level_3"
+        ],
+        "movement": null,
+        "attack": null,
+        "spell": {
+          "name": "New Paths",
+          "effect": "Split a Portal Guardian into 1 Bearer and 1 Portal. Place 1 Portal Bearer and 1 from Reserve diagonal to each other and adjacent to Portal Guardian. Portal Guardian back to Reserve."
+        },
+        "passives": [],
+        "defeats": [
+          2,
+          1
+        ]
+      },
+      {
+        "level": 2,
+        "name": "Portal Bearer",
+        "tags": [
+          "bearer",
+          "teleport",
+          "level_2"
+        ],
+        "movement": "Aerial Maneuver: Can move over adjacent creature to unoccupied field. Don't move Portal Bearer back to field started from.",
+        "attack": null,
+        "spell": null,
+        "passives": [
+          {
+            "name": "Arrival",
+            "effect": "Gain 1 Trigger if Portal Bearer placed into game."
+          },
+          {
+            "name": "Balance",
+            "effect": "If this on any unoccupied field, place 1 Portal from your Reserve or upgrade friendly Portal by 1 Power Level."
+          }
+        ],
+        "defeats": [
+          1
+        ]
+      },
+      {
+        "level": 1,
+        "name": "Portal",
+        "tags": [
+          "portal",
+          "teleport",
+          "level_1"
+        ],
+        "movement": "Unmovable: Portals can't use movement actions.",
+        "attack": null,
+        "spell": null,
+        "passives": [
+          {
+            "name": "As long as you control 1 Portal Bearer",
+            "effect": "You can move friendly creatures through it to field with Portal. Friendly Bearer performs with Portal Bearer back to Reserve and downgrade Portal Bearer by 1 Power Level."
+          },
+          {
+            "name": "Resistance",
+            "effect": "Immune against attacks if you control Portals ≤ friendly Portal Bearers in game."
+          }
+        ],
+        "defeats": []
+      }
+    ]
+  }
+}
