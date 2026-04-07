@@ -439,7 +439,7 @@
     /* rules overlay button mirroring */
     #rules-overlay.player2 #rules-prev,
     #rules-overlay.player2 #rules-next {
-      transform: scaleX(-1);
+      transform: scaleX(-2);
     }
     #rules-overlay.player2 #btn-close-rules {
       transform: rotate(180deg);
@@ -542,11 +542,11 @@
     <!-- Rules/Karten Overlay -->
     <div id="rules-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center;">
       <div style="flex: 1; display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 20px;">
-        <div id="rules-prev" style="width: 60px; height: 60px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--accent); user-select: none;">◀</div>
+        <div id="rules-prev" style="width: 10px; height: 60px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--accent); user-select: none;">◀</div>
         <div style="flex: 1; display: flex; align-items: center; justify-content: center; max-width: 90%;">
           <img id="rules-image" src="" style="max-width: 100%; max-height: 80vh; object-fit: contain;" alt="Rules">
         </div>
-        <div id="rules-next" style="width: 60px; height: 60px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--accent); user-select: none;">▶</div>
+        <div id="rules-next" style="width: 10px; height: 60px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--accent); user-select: none;">▶</div>
       </div>
       <button class="btn primary" id="btn-close-rules" style="margin-bottom: 40px; padding: 10px 20px; font-size: 1rem;">Zurück zum Spiel</button>
     </div>
