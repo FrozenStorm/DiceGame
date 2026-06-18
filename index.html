@@ -482,7 +482,11 @@
       transform: rotate(180deg);
     }
 
-    #app.online-player2 .die {
+    #app.online-player2 .center-stats {
+      flex-direction: column-reverse;
+    }
+
+    #app.online-player2 #rules-overlay {
       transform: rotate(180deg);
     }
 
@@ -991,7 +995,7 @@
                   : "radial-gradient(circle at 30% 20%, #79b5ff, var(--p2-color))";
               die.style.color = "#fff";
               let transform = "";
-              if (state.gameMode === "duel" && owner === 2) {
+              if ((state.gameMode === "duel" || state.gameMode === "online") && owner === 2) {
                 transform = "rotate(180deg)";
               }
               if (data.rotation !== 0) {
@@ -1012,7 +1016,7 @@
               img.style.borderRadius = "6px";
               img.alt = `Würfel ${data.value}`;
               let transform = "";
-              if (state.gameMode === "duel" && owner === 2) {
+              if ((state.gameMode === "duel" || state.gameMode === "online") && owner === 2) {
                 transform = "rotate(180deg)";
               }
               if (data.rotation !== 0) {
@@ -1361,6 +1365,9 @@
       currentDieBox.classList.remove("empty");
       currentDieBox.style.borderStyle = "solid";
 
+      const needsOwnerRotation = (state.gameMode === "duel" || state.gameMode === "online") && cell.owner === 2;
+      const needsPerspectiveRotation = state.gameMode === "online" && onlineState.localPlayer === 2;
+
       if (diceSet === "numbers") {
         currentDieBox.innerHTML = String(cell.value);
         currentDieBox.style.backgroundImage = "none";
@@ -1370,13 +1377,10 @@
             : "radial-gradient(circle at 30% 20%, #79b5ff, var(--p2-color))";
         currentDieBox.style.color = "#fff";
         let transform = "";
-        if (state.gameMode === "duel" && cell.owner === 2) {
-          transform = "rotate(180deg)";
-        }
-        if (cell.rotation !== 0) {
-          transform += ` rotate(${cell.rotation}deg)`;
-        }
-        currentDieBox.style.transform = transform || "none";
+        if (needsOwnerRotation) transform += " rotate(180deg)";
+        if (needsPerspectiveRotation) transform += " rotate(180deg)";
+        if (cell.rotation !== 0) transform += ` rotate(${cell.rotation}deg)`;
+        currentDieBox.style.transform = transform.trim() || "none";
       } else {
         currentDieBox.innerHTML = "";
         const imgPath =
@@ -1391,13 +1395,10 @@
         img.style.borderRadius = "6px";
         img.alt = `Würfel ${cell.value}`;
         let transform = "";
-        if (state.gameMode === "duel" && cell.owner === 2) {
-          transform = "rotate(180deg)";
-        }
-        if (cell.rotation !== 0) {
-          transform += ` rotate(${cell.rotation}deg)`;
-        }
-        img.style.transform = transform || "none";
+        if (needsOwnerRotation) transform += " rotate(180deg)";
+        if (needsPerspectiveRotation) transform += " rotate(180deg)";
+        if (cell.rotation !== 0) transform += ` rotate(${cell.rotation}deg)`;
+        img.style.transform = transform.trim() || "none";
         currentDieBox.appendChild(img);
         currentDieBox.style.color = "transparent";
         currentDieBox.style.transform = "none";
