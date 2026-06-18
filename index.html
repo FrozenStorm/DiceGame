@@ -2162,6 +2162,10 @@
     updateRoundDisplay();
     updateSaveLoadButtons();
     updateHistoryButtons();
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("sw.js");
+    }
   </script>
 </body>
 </html>
