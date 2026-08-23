@@ -447,16 +447,9 @@
       font-size: 0.85rem;
     }
 
-    /* rules overlay button mirroring */
-    #rules-overlay.player2 #rules-prev,
-    #rules-overlay.player2 #rules-next {
-      transform: scaleX(-2);
-    }
-    #rules-overlay.player2 #btn-close-rules {
-      transform: rotate(180deg);
-    }
+    /* rules overlay faces player 2 across the table */
     #rules-overlay.player2 {
-      flex-direction: column-reverse;
+      transform: rotate(180deg);
     }
 
     /* Online Mode - Player 2 Perspective */
@@ -1564,12 +1557,6 @@
       const img = document.getElementById("rules-image");
       const imagePath = rulesState.images[rulesState.currentImageIndex];
       img.src = imagePath;
-
-      if (state.gameMode === "duel" && state.currentPlayer === 2) {
-        img.style.transform = "rotate(180deg)";
-      } else {
-        img.style.transform = "none";
-      }
     }
 
     function nextRulesImage() {
