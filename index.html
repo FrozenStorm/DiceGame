@@ -1125,6 +1125,9 @@
           return;
         }
         state.selected = { type: "board", row: r, col: c };
+        document
+          .querySelectorAll(".player-zone .block.clickable")
+          .forEach((b) => b.classList.remove("selected"));
         updateBoardDOM();
         updateCurrentDieView();
         return;
