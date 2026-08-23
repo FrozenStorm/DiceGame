@@ -1316,6 +1316,7 @@
       if (v < 1) v = 6;
       if (v > 6) v = 1;
       cell.value = v;
+      state.selected.manipulated = true;
       updateBoardDOM();
       updateCurrentDieView();
       if (state.gameMode === "online") {
@@ -1333,6 +1334,7 @@
       if (cell.owner == null || cell.value == null) return;
       pushUndoState();
       cell.rotation = (cell.rotation + degrees) % 360;
+      state.selected.manipulated = true;
       updateBoardDOM();
       updateCurrentDieView();
       if (state.gameMode === "online") {
@@ -1664,7 +1666,11 @@
             state.selected.type === "board" &&
             state.board[state.selected.row][state.selected.col].owner === 1
           ) {
-            moveSelectedBoardDieToReserve(1);
+            if (state.selected.manipulated) {
+              onReserveClick(1);
+            } else {
+              moveSelectedBoardDieToReserve(1);
+            }
           } else if (
             state.selected &&
             state.selected.type === "exile" &&
@@ -1690,7 +1696,11 @@
             state.selected.type === "board" &&
             state.board[state.selected.row][state.selected.col].owner === 2
           ) {
-            moveSelectedBoardDieToReserve(2);
+            if (state.selected.manipulated) {
+              onReserveClick(2);
+            } else {
+              moveSelectedBoardDieToReserve(2);
+            }
           } else if (
             state.selected &&
             state.selected.type === "exile" &&
@@ -1714,7 +1724,11 @@
           state.selected.type === "board" &&
           state.board[state.selected.row][state.selected.col].owner === 1
         ) {
-          moveSelectedBoardDieToExile(1);
+          if (state.selected.manipulated) {
+            onExileClick(1);
+          } else {
+            moveSelectedBoardDieToExile(1);
+          }
         } else if (
           state.selected &&
           state.selected.type === "reserve" &&
@@ -1738,7 +1752,11 @@
           state.selected.type === "board" &&
           state.board[state.selected.row][state.selected.col].owner === 2
         ) {
-          moveSelectedBoardDieToExile(2);
+          if (state.selected.manipulated) {
+            onExileClick(2);
+          } else {
+            moveSelectedBoardDieToExile(2);
+          }
         } else if (
           state.selected &&
           state.selected.type === "reserve" &&
