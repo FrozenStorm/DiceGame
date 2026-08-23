@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>DiceWar</title>
@@ -137,8 +137,10 @@
     .counter-label {
       font-size: 0.75rem;
       color: var(--muted);
-      width: 70px;
+      width: 90px;
+      flex-shrink: 0;
       text-align: right;
+      white-space: nowrap;
     }
 
     .counter-value {
@@ -533,23 +535,23 @@
     <!-- Online Host Overlay -->
     <div id="online-host-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; gap: 20px;">
       <h2 style="margin: 0; font-size: 1.2rem;">Online – Host</h2>
-      <p style="margin: 0; color: var(--muted); font-size: 0.9rem;">Deine Verbindungs-ID:</p>
+      <p style="margin: 0; color: var(--muted); font-size: 0.9rem;">Your connection ID:</p>
       <div style="background: #1c1c1c; border-radius: 8px; padding: 20px; border: 2px solid var(--accent); text-align: center; position: relative;">
-        <div style="font-size: 1.5rem; font-family: monospace; font-weight: bold; color: var(--accent);" id="host-peer-id">Verbindung wird hergestellt...</div>
+        <div style="font-size: 1.5rem; font-family: monospace; font-weight: bold; color: var(--accent);" id="host-peer-id">Establishing connection...</div>
         <button class="btn small" id="btn-copy-peer-id" style="position:absolute; top:4px; right:4px;">📋</button>
       </div>
-      <p style="margin: 0; color: var(--muted); font-size: 0.8rem; max-width: 300px; text-align: center;">Teile diese ID mit deinem Mitspieler, damit er sich verbinden kann.</p>
-      <button class="btn primary" id="btn-start-as-host" style="padding: 10px 20px; font-size: 1rem;">OK – Spiel starten</button>
-      <button class="btn" id="btn-cancel-host" style="padding: 10px 20px; font-size: 1rem;">Abbrechen</button>
+      <p style="margin: 0; color: var(--muted); font-size: 0.8rem; max-width: 300px; text-align: center;">Share this ID with your opponent so they can connect.</p>
+      <button class="btn primary" id="btn-start-as-host" style="padding: 10px 20px; font-size: 1rem;">OK – Start Game</button>
+      <button class="btn" id="btn-cancel-host" style="padding: 10px 20px; font-size: 1rem;">Cancel</button>
     </div>
 
     <!-- Online Join Overlay -->
     <div id="online-join-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; gap: 20px;">
       <h2 style="margin: 0; font-size: 1.2rem;">Online – Join</h2>
-      <p style="margin: 0; color: var(--muted); font-size: 0.9rem;">Gib die Host-ID ein:</p>
-      <input type="text" id="join-peer-id-input" placeholder="z.B. abc123xyz" style="border-radius: 4px; border: 1px solid #333; background: #000; color: var(--text); padding: 8px 12px; font-size: 1rem; width: 200px; text-align: center;">
-      <button class="btn primary" id="btn-join-peer" style="padding: 10px 20px; font-size: 1rem;">OK – Verbinden</button>
-      <button class="btn" id="btn-cancel-join" style="padding: 10px 20px; font-size: 1rem;">Abbrechen</button>
+      <p style="margin: 0; color: var(--muted); font-size: 0.9rem;">Enter the host ID:</p>
+      <input type="text" id="join-peer-id-input" placeholder="e.g. abc123xyz" style="border-radius: 4px; border: 1px solid #333; background: #000; color: var(--text); padding: 8px 12px; font-size: 1rem; width: 200px; text-align: center;">
+      <button class="btn primary" id="btn-join-peer" style="padding: 10px 20px; font-size: 1rem;">OK – Connect</button>
+      <button class="btn" id="btn-cancel-join" style="padding: 10px 20px; font-size: 1rem;">Cancel</button>
     </div>
 
     <!-- Rules/Karten Overlay -->
@@ -561,21 +563,21 @@
         </div>
         <div id="rules-next" style="width: 30px; height: 60px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--accent); user-select: none;">▶</div>
       </div>
-      <button class="btn primary" id="btn-close-rules" style="margin-bottom: 40px; padding: 10px 20px; font-size: 1rem;">Zurück zum Spiel</button>
+      <button class="btn primary" id="btn-close-rules" style="margin-bottom: 40px; padding: 10px 20px; font-size: 1rem;">Back to Game</button>
     </div>
 
     <!-- Lobby -->
     <div id="lobby-overlay">
       <h1>DiceWar</h1>
-      <p>Wähle einen Spielmodus und pro Spieler ein Würfel‑Set und starte das Match.</p>
+      <p>Choose a game mode and a dice set for each player, then start the match.</p>
 
       <div id="lobby-config">
         <div class="lobby-player-config">
           <label>
-            Spielmodus
+            Game Mode
             <select id="game-mode-select">
               <option value="solo">Solo</option>
-              <option value="duel">Duell</option>
+              <option value="duel">Duel</option>
               <option value="online-host">Online – Host</option>
               <option value="online-join">Online – Join</option>
             </select>
@@ -583,44 +585,44 @@
         </div>
         <div class="lobby-player-config">
           <label>
-            Spieler 1 – Würfel‑Set
+            Player 1 – Dice Set
             <select id="p1-dice-set"></select>
           </label>
         </div>
         <div class="lobby-player-config">
           <label>
-            Spieler 2 – Würfel‑Set
+            Player 2 – Dice Set
             <select id="p2-dice-set"></select>
           </label>
         </div>
       </div>
 
-      <button class="btn primary" id="start-game-btn">Spiel starten</button>
+      <button class="btn primary" id="start-game-btn">Start Game</button>
     </div>
 
     <!-- Spielerzone 2 (oben) -->
     <div class="player-zone top" data-player="2">
       <div class="block clickable" id="p2-reserve">
-        <div class="label">Spieler 2 – Reserve</div>
+        <div class="label">Player 2 – Reserve</div>
         <div class="count-display" id="p2-reserve-count">15</div>
         <div class="dice-icon-row" id="p2-reserve-icons"></div>
       </div>
       <div class="center-stats">
         <div class="counter-row">
-          <span class="counter-label">Triggerpunkte</span>
+          <span class="counter-label">Trigger Points</span>
           <button class="btn small" data-counter="p2-trigger" data-delta="-1">−</button>
           <span class="counter-value" id="p2-trigger">0</span>
           <button class="btn small" data-counter="p2-trigger" data-delta="1">+</button>
         </div>
         <div class="counter-row">
-          <span class="counter-label">Siegpunkte</span>
+          <span class="counter-label">Victory Points</span>
           <button class="btn small" data-counter="p2-victory" data-delta="-1">−</button>
           <span class="counter-value" id="p2-victory">0</span>
           <button class="btn small" data-counter="p2-victory" data-delta="1">+</button>
         </div>
       </div>
       <div class="block clickable" id="p2-exile">
-        <div class="label">Spieler 2 – Exil</div>
+        <div class="label">Player 2 – Exile</div>
         <div class="count-display" id="p2-exile-count">0</div>
         <div class="dice-icon-row" id="p2-exile-icons"></div>
       </div>
@@ -631,7 +633,7 @@
       <!-- Obere Side-Panel -->
       <div class="side-panel">
         <div class="side-card">
-        <button class="btn primary" id="btn-lobby">Zur Lobby</button>
+        <button class="btn primary" id="btn-lobby">Lobby</button>
         <!-- Speichern / Laden nebeneinander -->
         <div style="display: flex; gap: 4px; margin-top: 4px;">
           <button class="btn" id="btn-save" style="flex: 1;">💾</button>
@@ -640,11 +642,11 @@
         <input type="file" id="load-file-input" accept=".json,application/json" style="display: none;">
       </div>
         <div class="side-card">
-          <div class="status-text" id="status-text">Spieler 1 ist am Zug.</div>
-          <div class="status-text" id="round-text" style="margin-top: 8px; font-size: 0.75rem; color: var(--muted);">Runde: 1</div>
+          <div class="status-text" id="status-text">Player 1's turn.</div>
+          <div class="status-text" id="round-text" style="margin-top: 8px; font-size: 0.75rem; color: var(--muted);">Round: 1</div>
         </div>
         <div class="side-card">
-          <button class="btn primary" id="btn-end-turn">Zug beenden</button>
+          <button class="btn primary" id="btn-end-turn">End Turn</button>
           <!-- NEU: Undo / Redo -->
           <div style="margin-top:6px; display:flex; gap:0;">
             <button class="btn" id="btn-undo" style="flex:1; margin:0;">&#x21B6</button>
@@ -661,7 +663,7 @@
       <!-- Untere Side-Panel -->
       <div class="side-panel">
         <div class="side-card card-player2">
-          <button class="btn" id="btn-player2-cards">Spieler 2<br />Karten</button>
+          <button class="btn" id="btn-player2-cards">Player 2<br />Cards</button>
         </div>
         <div class="side-card btn-up-card">
           <button class="btn primary" id="btn-die-plus">+</button>
@@ -669,7 +671,7 @@
         <div class="side-card current-die-card">
           <div class="current-die-view">
             <div class="current-die-box empty" id="current-die-box">
-              Kein<br />Würfel
+              No<br />Die
             </div>
           </div>
         </div>
@@ -677,7 +679,7 @@
           <button class="btn primary" id="btn-die-minus">↻</button>
         </div>
         <div class="side-card card-player1">
-          <button class="btn" id="btn-player1-cards">Spieler 1<br />Karten</button>
+          <button class="btn" id="btn-player1-cards">Player 1<br />Cards</button>
         </div>
       </div>
     </div>
@@ -685,26 +687,26 @@
     <!-- Spielerzone 1 (unten) -->
     <div class="player-zone bottom" data-player="1">
       <div class="block clickable" id="p1-reserve">
-        <div class="label">Spieler 1 – Reserve</div>
+        <div class="label">Player 1 – Reserve</div>
         <div class="count-display" id="p1-reserve-count">15</div>
         <div class="dice-icon-row" id="p1-reserve-icons"></div>
       </div>
       <div class="center-stats">
         <div class="counter-row">
-          <span class="counter-label">Siegpunkte</span>
+          <span class="counter-label">Victory Points</span>
           <button class="btn small" data-counter="p1-victory" data-delta="-1">−</button>
           <span class="counter-value" id="p1-victory">0</span>
           <button class="btn small" data-counter="p1-victory" data-delta="1">+</button>
         </div>
         <div class="counter-row">
-          <span class="counter-label">Triggerpunkte</span>
+          <span class="counter-label">Trigger Points</span>
           <button class="btn small" data-counter="p1-trigger" data-delta="-1">−</button>
           <span class="counter-value" id="p1-trigger">0</span>
           <button class="btn small" data-counter="p1-trigger" data-delta="1">+</button>
         </div>
       </div>
       <div class="block clickable" id="p1-exile">
-        <div class="label">Spieler 1 – Exil</div>
+        <div class="label">Player 1 – Exile</div>
         <div class="count-display" id="p1-exile-count">0</div>
         <div class="dice-icon-row" id="p1-exile-icons"></div>
       </div>
@@ -714,7 +716,7 @@
   <script>
     // --- Würfel-Sets ---
     const DICE_SETS = [
-      { id: "numbers", label: "Zahlen" },
+      { id: "numbers", label: "Numbers" },
       { id: "LoD", label: "Light of Dragons" },
       { id: "RoM", label: "Roots of Mali" },
       { id: "BoD", label: "Bond of Demons" },
@@ -820,7 +822,7 @@
     }
 
     function setStatusFromState() {
-      setStatus("Spieler " + state.currentPlayer + " ist am Zug.");
+      setStatus("Player " + state.currentPlayer + "'s turn.");
     }
 
     function updateHistoryButtons() {
@@ -1014,7 +1016,7 @@
               img.style.height = "100%";
               img.style.objectFit = "contain";
               img.style.borderRadius = "6px";
-              img.alt = `Würfel ${data.value}`;
+              img.alt = `Die ${data.value}`;
               let transform = "";
               if ((state.gameMode === "duel" || state.gameMode === "online") && owner === 2) {
                 transform = "rotate(180deg)";
@@ -1353,7 +1355,7 @@
     function updateCurrentDieView() {
       if (!state.selected || state.selected.type !== "board") {
         currentDieBox.classList.add("empty");
-        currentDieBox.innerHTML = "Kein<br />Würfel";
+        currentDieBox.innerHTML = "No<br />Die";
         currentDieBox.style.backgroundImage = "none";
         currentDieBox.style.background = "transparent";
         currentDieBox.style.borderStyle = "dashed";
@@ -1364,7 +1366,7 @@
       const cell = state.board[row][col];
       if (cell.owner == null || cell.value == null) {
         currentDieBox.classList.add("empty");
-        currentDieBox.innerHTML = "Kein<br />Würfel";
+        currentDieBox.innerHTML = "No<br />Die";
         currentDieBox.style.backgroundImage = "none";
         currentDieBox.style.background = "transparent";
         currentDieBox.style.borderStyle = "dashed";
@@ -1406,7 +1408,7 @@
         img.style.height = "100%";
         img.style.objectFit = "contain";
         img.style.borderRadius = "6px";
-        img.alt = `Würfel ${cell.value}`;
+        img.alt = `Die ${cell.value}`;
         let transform = "";
         if (needsOwnerRotation) transform += " rotate(180deg)";
         if (needsPerspectiveRotation) transform += " rotate(180deg)";
@@ -1442,7 +1444,7 @@
 
       state.currentPlayer = state.currentPlayer === 1 ? 2 : 1;
       clearSelection();
-      setStatus("Spieler " + state.currentPlayer + " ist am Zug.");
+      setStatus("Player " + state.currentPlayer + "'s turn.");
       updateRoundDisplay();
       refreshPlayerPanels();
 
@@ -1452,7 +1454,7 @@
     }
 
     function updateRoundDisplay() {
-      document.getElementById("round-text").textContent = "Runde: " + state.roundNumber;
+      document.getElementById("round-text").textContent = "Round: " + state.roundNumber;
     }
 
     function updateCardButtons() {
@@ -1512,7 +1514,7 @@
       clearSelection();
       resetHistory();
       updateSaveLoadButtons();
-      setStatus("Spieler 1 ist am Zug.");
+      setStatus("Player 1's turn.");
     }
 
     // --- Rules/Karten Overlay ---
@@ -1864,10 +1866,10 @@
             resetHistory();
             setStatusFromState();
             updateSaveLoadButtons();
-            alert("Spielstand geladen.");
+            alert("Save loaded.");
           } catch (err) {
             console.error(err);
-            alert("Fehler beim Laden der Datei.");
+            alert("Error loading file.");
           }
         };
         reader.readAsText(file);
@@ -1953,7 +1955,7 @@
         onlineState.connection = conn;
         onlineState.remotePeerId = conn.peer;
         if (state.gameMode === "online" && onlineState.isHost) {
-          setStatus("Spieler " + state.currentPlayer + " ist am Zug.");
+          setStatus("Player " + state.currentPlayer + "'s turn.");
           sendGameState();
         }
       });
@@ -1962,7 +1964,7 @@
         handleRemoteGameState(data);
       });
       conn.on("close", () => {
-        alert("Verbindung zum Mitspieler unterbrochen!");
+        alert("Connection to opponent lost!");
         goBackToLobby();
       });
       conn.on("error", (err) => {
@@ -1975,7 +1977,7 @@
         console.log("connectToHost: trying to connect to", hostPeerId);
         const conn = onlineState.peer.connect(hostPeerId);
         const timeout = setTimeout(() => {
-          const msg = "Timeout beim Verbinden zum Host";
+          const msg = "Timeout connecting to host";
           console.warn(msg);
           conn.close();
           reject(new Error(msg));
@@ -1992,7 +1994,7 @@
           handleRemoteGameState(data);
         });
         conn.on("close", () => {
-          alert("Verbindung zum Host unterbrochen!");
+          alert("Connection to host lost!");
           goBackToLobby();
         });
         conn.on("error", (err) => {
@@ -2024,7 +2026,7 @@
       updateBoardDOM();
       refreshPlayerPanels();
       updateRoundDisplay();
-      setStatus("Spieler " + state.currentPlayer + " ist am Zug.");
+      setStatus("Player " + state.currentPlayer + "'s turn.");
     }
 
     function updatePerspective() {
@@ -2068,7 +2070,7 @@
           clearSelection();
           resetHistory();
           updateSaveLoadButtons();
-          setStatus("Spieler 1 ist am Zug. Warte auf Mitspieler...");
+          setStatus("Player 1's turn. Waiting for opponent...");
 
           resolve();
         };
@@ -2085,7 +2087,7 @@
           const hostId = document.getElementById("join-peer-id-input").value.trim();
           console.log("Join button clicked, hostId=", hostId);
           if (!hostId) {
-            alert("Bitte gib eine Host-ID ein.");
+            alert("Please enter a host ID.");
             return;
           }
 
@@ -2116,12 +2118,12 @@
             clearSelection();
             resetHistory();
             updateSaveLoadButtons();
-            setStatus("Mit Host verbunden. Warte auf Spielstart...");
+            setStatus("Connected to host. Waiting for game start...");
 
             resolve();
           } catch (err) {
             console.error("join failed", err);
-            alert("Fehler beim Verbinden: " + err);
+            alert("Error connecting: " + err);
             reject(err);
           }
         };
@@ -2156,7 +2158,7 @@
     document.getElementById("btn-copy-peer-id").addEventListener("click", () => {
       const id = document.getElementById("host-peer-id").textContent;
       navigator.clipboard.writeText(id).then(() => {
-        alert("ID kopiert: " + id);
+        alert("ID copied: " + id);
       }).catch(err => console.error("Copy failed", err));
     });
 
