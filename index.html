@@ -1162,9 +1162,13 @@
             cell.owner = p;
             cell.value = 1;
             cell.rotation = 0;
-            clearSelection();
+            state.selected = { type: "board", row: r, col: c, manipulated: true };
+            document
+              .querySelectorAll(".player-zone .block.clickable")
+              .forEach((b) => b.classList.remove("selected"));
             refreshPlayerPanels();
             updateBoardDOM();
+            updateCurrentDieView();
             if (state.gameMode === "online") {
               sendGameState();
             }
@@ -1180,9 +1184,13 @@
             cell.owner = p;
             cell.value = 1;
             cell.rotation = 0;
-            clearSelection();
+            state.selected = { type: "board", row: r, col: c, manipulated: true };
+            document
+              .querySelectorAll(".player-zone .block.clickable")
+              .forEach((b) => b.classList.remove("selected"));
             refreshPlayerPanels();
             updateBoardDOM();
+            updateCurrentDieView();
             if (state.gameMode === "online") {
               sendGameState();
             }
